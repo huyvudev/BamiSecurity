@@ -1,4 +1,4 @@
-# DATN — Hệ thống lưu trữ phân tán tích hợp nhận diện hành động video
+# BamiSecurity — Hệ thống lưu trữ phân tán tích hợp nhận diện hành động video
 
 Dự án này kết hợp 2 phần chính:
 
