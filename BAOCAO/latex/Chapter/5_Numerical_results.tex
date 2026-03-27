@@ -1,0 +1,165 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\section{Triển khai hệ thống lưu trữ phân tán}
+ 
+\subsection{Chuẩn bị phần cứng: }
+\begin{itemize}
+    \item 1 bộ Switch và dây LAN CAT6E để kết nối các máy tính với nhau
+    \item 3 máy tính cài đặt hệ điều hành Microsoft Window 11 Pro Edition kết nối với nhau thông qua Switch
+    \begin{itemize}
+        \item 1 Name Node (Master): Core i5 9500 (6 Core), GeForce GT 730, 16GB RAM, 1TB SSD
+        \item 1 Data Node (Slave): Raspberry Pi 4 Model B, Cortex-A72 (4 Core), 8GB RAM, 128GB SD Card 
+    \end{itemize}
+\end{itemize}
+\subsection{Cài đặt địa chỉ IP, các thư viện cần thiết và phần mềm hệ thống cơ sở dữ liệu phân tán trên các máy tính trong mạng}
+\begin{itemize}
+    \item Cài đặt trên tất cả các máy Node.js 18.20.4 và npm 10.7.0
+    \item Cài đặt địa chỉ IPv4 cho các máy:
+    \begin{itemize}
+        \item Name Node: 192.168.1.88
+        \item Data Node 1: 192.168.1.8
+        \item Data Node 2: 192.168.1.2
+    \end{itemize}
+    \item Cài đặt bộ mã nguồn phần mềm hệ thống cơ sở dữ liệu phân tán trên cả tất cả các máy tính.
+    \item Tạo một thư mục có tên store trên 2 Data Node để lưu trữ dữ liệu.   
+\end{itemize}
+\subsection{Khởi chạy hệ thống}
+\begin{itemize}
+    \item{\textbf{Khởi chạy Name Node bằng lệnh:}} npm run start:namenode
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/NameNode Chay.jpg}
+        \caption{Khởi chạy Name Node }
+    \end{figure}
+    \item{\textbf{Khởi chạy Data Node 1 bằng lệnh:}} npm run start:datanode1
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/DatanodeChay.jpeg}
+        \caption{Khởi chạy Data Node 1 }
+    \end{figure}
+    Data Node 1 được khởi chạy đồng thời nó cũng bắt đầu gửi heartbeat để báo cáo trạng thái đến Name Node 
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/heartbeat1.jpeg}
+        \caption{Name Node nhận heartbeat của Data Node 1 }
+    \end{figure}
+    \item{\textbf{Khởi chạy Data Node 2 bằng lệnh:}} npm run start:datanode2
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/DatanodeChay.jpeg}
+        \caption{Khởi chạy Data Node 2}
+    \end{figure}
+    Data Node 2 được khởi chạy đồng thời nó cũng bắt đầu gửi heartbeat để báo cáo trạng thái đến Name Node 
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/heartbeat2.jpeg}
+         \caption{Name Node nhận heartbeat của Data Node 2 }
+    \end{figure}
+    \item{\textbf{Tiến hành tải lên file dữ liệu}} \\
+    File: hình ảnh nặng 95,5KB\\
+    Tiến hành tải lên file từ phía client
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/TaiLenTuClient.jpg}
+        \caption{File được tải lên từ client}
+    \end{figure}
+    Name Node sẽ nhận file và lưu metadata
+    \begin{figure}[H]
+        \includegraphics[scale = 0.8]{Figure/NameNodeLuu.jpg}
+        \caption{Name Node 1 thực hiện lưu metadata}
+    \end{figure}
+    Hệ thông tiến hành chia file thành 3 khối dữ liệu đánh chỉ mục từ 1 đến 3 và lưu vào ổ đĩa.
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/DataNode1Luu.jpg}
+        \caption{Data Node 1 ghi dữ liệu}
+    \end{figure}
+    Hệ thống tiến hành nhân bản dữ liệu sang Data Node 2
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/DataNode2Luu.jpg}
+        \caption{Nhân bản dữ liệu sang Data Node 2}
+    \end{figure}
+    \item{\textbf{Tiến hành đọc file}} \\
+    {\textbf{Trường hợp các Data Node đều hoạt động}}\\
+    Hệ thống sẽ bắt đầu thực hiện việc đọc file bằng cách gửi yêu cầu cho Name Node
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/DocTuClientKhiCa2NodeDangBat.jpg}
+        \caption{Đọc file từ client}
+    \end{figure}
+    Name Node kiểm tra heartbeat của các Data Node và Metadata đã lưu sau đó trả về cho client.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{Figure/NameNodeDocKhiConDu2Node.jpg}
+        \caption{Name Node lưu metadata và kiểm tra heartbeat}
+    \end{figure}
+    Hệ thống tiếp tục gửi yêu cầu đọc cho một trong các Data Node đang hoạt động (ưu tiên Data Node 1). Data Node 1 đọc file và trả về cho client các khối dữ liệu cùng với chỉ mục tệp của nó.
+    \begin{figure}[H]
+        \includegraphics[scale = 0.8, width = 1\linewidth]{Figure/DataNode1DocKhiConDu2Node.jpg}
+        \caption{Data Node 1 đọc file và trả về các khối dữ liệu cho client}
+    \end{figure}
+    Client sau khi nhận được các khối dữ liệu và chỉ mục thì tiến hành ghép nối dữ liệu và chuyển từ mã nhị phân về file hoàn chỉnh rồi cho phép client tải xuống
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.4\linewidth]{Figure/TaiXuong1.jpg}
+        \caption{File đã được tải xuống}
+    \end{figure}
+    {\textbf{Trường hợp tắt một Data Node}}\\
+    Hệ thống sẽ bắt đầu thực hiện việc đọc file bằng cách gửi yêu cầu cho Name Node
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/DocTuClientKhi1DataNodeTat.jpg}
+        \caption{Đọc file từ client}
+    \end{figure}
+    Name Node kiểm tra heartbeat của các Data Node và Metadata đã lưu sau đó trả về cho client.
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/NameNodeDocKhi1NodeBiTat.jpg}
+        \caption{Name Node lưu metadata và kiểm tra heartbeat}
+    \end{figure}
+    Hệ thống tiếp tục gửi yêu cầu đọc cho một trong các Data Node đang hoạt động (Chỉ còn Data Node 2). Data Node 2 đọc file và trả về cho client các khối dữ liệu cùng với chỉ mục tệp của nó.
+    \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/MotMinhDataNode2Doc.jpg}
+        \caption{Data Node 2 đọc file và trả về các khối dữ liệu cho client}
+    \end{figure}
+    Client sau khi nhận được các khối dữ liệu và chỉ mục thì tiến hành ghép nối dữ liệu và chuyển từ mã nhị phân về file hoàn chỉnh rồi cho phép client tải xuống
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.3\linewidth]{Figure/TaiXuong1.jpg}
+        \caption{File đã được tải xuống}
+    \end{figure}
+\end{itemize}
+
+\section{Triển khai hệ thống lưu nhân diện hành động}
+Khởi chạy máy chủ nhận diện hành động.Máy chủ này đã có file h5 đã được train.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/KhoiDongMayChuNhanDienHanhDong.png}
+        \caption{Khởi động máy chủ nhận diện hành động}
+    \end{figure}
+ Khi client nhận diện chuyển động và tự động cắt video 20s và gửi lên cho máy chủ nhận diện hành động.Hành động được dự đoán là typing với độ tin cậy là 31.56\%. Sau đó máy chủ dự đoán sẽ gọi API đến máy chủ lưu trữ để lưu video này lên hệ thống lưu trữ phân tán. Video sẽ được lưu với tên:"Nhãn hành động + Thời gian"\\
+ \textbf{Ví dụ:} Typing\_20250425\_144545
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figure/ClientKhoiDongVaNhanDienHanhDong.jpg}
+        \caption{Video hành động được lưu vào hệ thống lưu trữ phân tán}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/ServerNhanDienHanhDongVaLuu.png}
+        \caption{Video hành động được lưu vào hệ thống lưu trữ phân tán (client)}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{Figure/LuuVideoVaoCSDL.png}
+        \caption{Video hành động được lưu vào hệ thống lưu trữ phân tán (server)}
+    \end{figure}
+    Máy chủ sẽ nhận diện hành động và trả về cho client kết quả hành động là nhãn của video là Typing với độ tin cậy 31.56\%.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\linewidth]{Figure/ServerTraNhanVeChoClient.jpg}
+        \caption{Video hành động được lưu vào hệ thống lưu trữ phân tán}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/GiaoDien.jpg}
+        \caption{Giao diện quản lý file}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/TaiXuong.jpg}
+        \caption{Video hành động đã được tải xuống}
+    \end{figure}
+
+\end{document}

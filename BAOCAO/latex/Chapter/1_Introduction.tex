@@ -1,0 +1,41 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section{Đặt vấn đề}
+\label{sec:dvd}
+Trong bối cảnh chuyển đổi số diễn ra mạnh mẽ và sự phát triển nhanh chóng của các thiết bị IoT (Internet of Things), nhu cầu lưu trữ và xử lý dữ liệu lớn ngày càng trở nên cấp thiết. Một trong những ứng dụng tiêu biểu là hệ thống camera giám sát – nơi dữ liệu video được tạo ra liên tục với dung lượng lớn và yêu cầu cao về tốc độ truy xuất, tính ổn định cũng như độ tin cậy của hệ thống lưu trữ.
+
+Tuy nhiên, việc xử lý và lưu trữ dữ liệu video trong môi trường phân tán đặt ra nhiều thách thức, bao gồm quản lý tài nguyên phân tán, tối ưu hiệu năng đọc/ghi dữ liệu lớn và đảm bảo khả năng phục hồi khi xảy ra sự cố. Bên cạnh đó, các giải pháp hiện có thường đòi hỏi chi phí đầu tư cao hoặc khó tích hợp vào các hệ thống giám sát quy mô nhỏ, đặc biệt trong các môi trường có tài nguyên phần cứng hạn chế.
+
+Trong đồ án tốt nghiệp này, tôi đề xuất xây dựng một nền tảng lưu trữ dữ liệu phân tán hoạt động trên hệ thống máy tính nhúng, dựa trên kiến trúc Master – Slave. Hệ thống không chỉ hướng đến việc lưu trữ dữ liệu video từ camera an ninh một cách hiệu quả, mà còn được tích hợp thêm khả năng nhận diện hành động nhằm phục vụ cho mục tiêu giám sát thông minh. Giải pháp đề xuất kỳ vọng mang lại tính hiệu quả về chi phí, khả năng mở rộng linh hoạt và hiệu suất cao trong xử lý dữ liệu lớn tại chỗ, góp phần đáp ứng nhu cầu ngày càng cao trong lĩnh vực an ninh và giám sát.
+\section{Mục tiêu và phạm vi đề tài} 
+\label{sec:giaiphap}
+Hiện nay, việc lưu trữ và quản lý dữ liệu lớn từ hệ thống camera giám sát đang trở thành một bài toán quan trọng và cấp thiết. Đặc biệt trong các hệ thống mạng cục bộ, nhu cầu xây dựng một nền tảng lưu trữ hiệu quả, có khả năng phân tán và mở rộng linh hoạt là điều không thể thiếu để đáp ứng tốc độ phát sinh dữ liệu ngày càng cao.
+
+Các nghiên cứu gần đây cho thấy hệ thống nhúng, tiêu biểu như Raspberry Pi, đang ngày càng được ứng dụng rộng rãi trong việc phát triển các giải pháp lưu trữ chi phí thấp, phù hợp với các mô hình giám sát vừa và nhỏ. Tuy nhiên, việc xử lý và tối ưu hiệu suất đọc/ghi dữ liệu lớn trên nền tảng nhúng vẫn là một thách thức, đặc biệt khi dung lượng video giám sát có thể tăng đột biến theo thời gian thực.
+
+Trước thực trạng đó, xu hướng hiện nay đang dịch chuyển sang các giải pháp lưu trữ phân tán – nơi dữ liệu được phân phối và quản lý trên nhiều nút hệ thống, giúp giảm tải cho từng thành phần riêng lẻ và nâng cao độ tin cậy chung. Trong số các kiến trúc lưu trữ phân tán, mô hình Master – Slave đang được áp dụng phổ biến nhờ vào tính đơn giản, dễ triển khai và khả năng mở rộng tốt. Tuy nhiên, để áp dụng hiệu quả mô hình này trong các hệ thống camera giám sát sử dụng thiết bị nhúng, cần có những nghiên cứu chuyên sâu và tối ưu hóa phù hợp với đặc thù dữ liệu và điều kiện vận hành thực tế.
+
+Mục tiêu chung của đồ án là xây dựng một nền tảng lưu trữ dữ liệu lớn phân tán dựa trên hệ thống nhúng, phục vụ cho việc lưu trữ dữ liệu từ hệ thống camera trong mạng cục bộ đồng thời tích hợp hệ thống nhận diện hành động thông qua video.
+
+\section{Định hướng giải pháp}
+Để đạt được mục tiêu chung của hệ thống, đồ án tập trung vào các mục tiêu cụ thể sau:
+
+\begin{itemize}
+   \item Xây dựng chương trình nhận diện hành động thông qua video bằng mô hình CLIP+LSTM
+   \item Thiết kế và triển khai hệ thống lưu trữ phân tán bằng Nodejs sử dụng 2 Raspberry Pi làm node lưu trữ và 1 PC làm master node
+   \item Xây dựng giao diện bằng Angular
+   \item Đánh giá hiệu năng và độ tin cậy của hệ thống
+\end{itemize}
+Giải pháp đề xuất bao gồm việc thiết kế và triển khai các chức năng như tải lên video hoặc sử dụng camera để quay lại các hành động sau đó dự đoán và lưu vào các Datanode hệ thống dữ liệu lớn, quản lý và tìm kiếm các video có nội dung như theo hành động của video
+\section{Bố cục}
+Chương 2 cung cấp cái nhìn tổng quan về các khái niệm và công nghệ liên quan đến hệ thống lưu trữ dữ liệu phân tán và nhận diện hành động, tập trung vào việc kiến trúc của hệ thống lưu trữ dữ liệu lớn và mô hình nhận diện hành động thông qua video.
+
+Chương 3 tập trung vào việc giới thiệu và phân tích các công nghệ, thư viện và công cụ được sử dụng trong đồ án. Các công nghệ nền tảng như Nodejs, Angular, các công cụ xử lý video và mô hình AI phục vụ cho nhận diện hành động sẽ được làm rõ. Đồng thời, chương cũng trình bày các công cụ hỗ trợ phát triển, cấu hình hệ thống nhúng và phương pháp truyền – lưu trữ dữ liệu giữa các node.
+
+Chương 4 là phần trọng tâm về thiết kế và triển khai hệ thống. Chương này mô tả kiến trúc tổng thể của hệ thống, cơ chế phân phối dữ liệu giữa các node, cách đảm bảo tính nhất quán và phục hồi khi có lỗi. Ngoài ra, quá trình tích hợp mô hình nhận diện hành động vào hệ thống camera giám sát cũng được trình bày chi tiết. Các kỹ thuật kiểm thử và đánh giá hiệu năng.
+
+Chương 5 là phần tổng kết, đánh giá kết quả đạt được trong suốt quá trình thực hiện đồ án. Nội dung bao gồm phân tích ưu điểm, hạn chế của hệ thống, tính khả thi khi triển khai thực tế, và đề xuất các hướng phát triển tiếp theo như cải thiện hiệu năng xử lý AI, hỗ trợ nhiều định dạng camera hơn, hay nâng cấp bảo mật cho hệ thống phân tán.
+
+
+
+\end{document}

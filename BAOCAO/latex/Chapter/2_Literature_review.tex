@@ -1,0 +1,110 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+Chương này cung cấp cái nhìn tổng quan về các khái niệm và công nghệ cốt lõi liên quan đến việc xây dựng nền tảng lưu trữ dữ liệu lớn phân tán trên hệ thống nhúng, kết hợp với chức năng nhận diện hành động. Mở đầu chương là phần xác định rõ phạm vi thực hiện của đồ án, bao gồm các yêu cầu kỹ thuật và định hướng ứng dụng thực tiễn. Tiếp theo, các nghiên cứu liên quan trong lĩnh vực lưu trữ phân tán và hệ thống nhúng được phân tích nhằm làm rõ cơ sở lý luận và động lực lựa chọn đề tài. Cuối cùng, chương trình bày chi tiết hai nội dung nền tảng quan trọng: hệ thống tệp phân tán và các kỹ thuật tối ưu hiệu suất lưu trữ – đóng vai trò then chốt trong việc thiết kế và triển khai hệ thống một cách hiệu quả.
+\section{Phạm vi đồ án}
+Đồ án này tập trung vào việc xây dựng một hệ thống lưu trữ phân tán cho dữ liệu lớn tích hợp hệ thống nhận diện hành động với các giới hạn và phạm vi cụ thể như sau:
+
+
+\begin{itemize}
+   \item Xây dựng và huấn luyện mô hình CLIP + LSTM để nhận diện hành động qua video
+   \item Xây dựng và triển khai hệ thống lưu trữ dữ liệu phân tán bằng Nodejs trên các 
+   \item Tích hợp hệ thống nhận diện hành động và lưu vào hệ thống lưu trữ phân tán
+   \item Xây dựng giao diện bằng Angular có các chức năng quay lại đoạn video hoặc tải lên video để nhận diện hành động và lưu vào hệ thống lưu trữ phân tán, chức năng tìm kiếm quản lý video theo hành động, cho phép tìm kiếm và tải xuống video.
+\end{itemize}
+
+\section{Cơ sở lý thuyết}
+\subsection{Khái niệm về hệ cơ sở dữ liệu phân tán}
+Cơ sở dữ liệu phân tán là một cơ sở dữ liệu trong đó dữ liệu được lưu trữ tại nhiều vị trí vật lý khác nhau. Dữ liệu có thể được lưu trữ trên nhiều máy tính nằm trong cùng một vị trí vật lý (ví dụ: một trung tâm dữ liệu) hoặc phân tán trên một mạng lưới các máy tính được kết nối với nhau. Không giống như các hệ thống song song, trong đó các bộ xử lý được liên kết chặt chẽ và tạo thành một hệ thống cơ sở dữ liệu duy nhất, một hệ thống cơ sở dữ liệu phân tán bao gồm các vị trí được liên kết lỏng lẻo, không chia sẻ bất kỳ thành phần vật lý nào.
+
+Quản trị viên hệ thống có thể phân phối các tập hợp dữ liệu (ví dụ: trong một cơ sở dữ liệu) trên nhiều vị trí vật lý khác nhau. Một cơ sở dữ liệu phân tán có thể tồn tại trên các máy chủ mạng được tổ chức, trên các máy tính độc lập phi tập trung trong Internet, trong các mạng nội bộ (intranet) hoặc mạng ngoại vi (extranet) của doanh nghiệp, hoặc trên các mạng của tổ chức khác. Vì cơ sở dữ liệu phân tán lưu trữ dữ liệu trên nhiều máy tính, chúng có thể cải thiện hiệu suất tại các điểm làm việc của người dùng cuối bằng cách cho phép các giao dịch được xử lý trên nhiều máy tính thay vì bị giới hạn trên một máy duy nhất.
+
+\subsection{Kiến trúc Master - Slave}
+Kiến trúc Master-Slave là một mô hình phân tán trong hệ thống máy tính, trong đó hệ thống được chia thành hai thành phần chính: Master (chủ) và Slave (phụ). Mỗi thành phần đóng một vai trò cụ thể, với Master chịu trách nhiệm điều phối và quản lý, còn Slave thực hiện các tác vụ được giao.
+\begin{itemize}
+    \item \textbf{Vai trò của Master}: Là trung tâm điều phối của hệ thống. Chịu trách nhiệm phân công công việc cho các Slave, theo dõi trạng thái và sức khỏe của các Slave, lưu trữ thông tin quản lý, chẳng hạn như metadata trong hệ thống tệp phân tán, xử lý lỗi bằng cách điều chỉnh hoặc thay thế các Slave gặp sự cố.
+    \item \textbf{Vai trò của Slave}: Là các thực thể thực hiện các tác vụ cụ thể mà Master giao phó. Nhiệm vụ chính là lưu trữ dữ liệu thực tế (trong các hệ thống tệp phân tán), xử lý và tính toán dữ liệu (trong các hệ thống xử lý dữ liệu lớn), gửi kết quả hoặc báo cáo trạng thái công việc cho Master.
+\end{itemize}
+ 
+\textbf{Cách thức hoạt động:}
+\begin{itemize}
+    \item Master nhận yêu cầu từ phía người dùng hoặc ứng dụng và phân chia yêu cầu lớn thành các công việc nhỏ hơn, phân phối chúng đến các Slave.
+    \item Các Slave xử lý từng phần dữ liệu hoặc thực hiện các tác vụ cụ thể theo chỉ đạo của Master.
+    \item Sau khi thực hiện xong các Slave gửi phản hồi về tiến độ hoặc kết quả cho Master.
+    \item Master tổng hợp các kết quả từ các Slave và gửi kết quả cuối cùng cho người dùng.
+\end{itemize}
+\subsection{So sánh kiến trúc Master-Slave và Peer-to-Peer}
+\textbf{Kiến trúc ngang hàng (Peer-to-Peer, viết tắt là P2P)} là một mô hình hệ thống phân tán trong đó mọi node trong mạng đều bình đẳng, không có máy chủ trung tâm điều phối. Trong P2P, mỗi node (peer) vừa đóng vai trò là máy chủ (server) vừa là máy khách (client), có thể trực tiếp chia sẻ, lưu trữ và truy xuất dữ liệu với các node khác mà không cần qua một điểm trung gian nào.
+\textbf{So sánh hai kiến trúc}
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{5cm}|}
+        \hline
+        \textbf{Tiêu chí} & \textbf{Master-Slave} & \textbf{Ngang hàng (Peer-to-Peer – P2P)} \\
+        \hline
+        Cấu trúc & Phân cấp rõ ràng: 1 Master, nhiều Slave & Các node ngang hàng, không có “trung tâm” \\
+        \hline
+        Quản lý dữ liệu/metadata & Tập trung tại Master & Phân tán ở nhiều node, mỗi node tự quản lý \\
+        \hline
+        Điều phối \& phân công & Master điều phối, Slave thực thi & Mỗi node tự trao đổi trực tiếp với nhau \\
+        \hline
+        Khả năng mở rộng & Dễ mở rộng bằng cách thêm Slave & Rất linh hoạt, node nào cũng có thể tham gia hoặc rời khỏi mạng dễ dàng \\
+        \hline
+        Chịu lỗi (Fault tolerance) & Master lỗi $\rightarrow$ hệ thống bị ảnh hưởng lớn (trừ khi có Master dự phòng) & Không có điểm lỗi trung tâm, hệ thống vẫn hoạt động nếu 1 node gặp sự cố \\
+        \hline
+        Hiệu suất & Cao, kiểm soát tốt, tối ưu hóa được tài nguyên & Hiệu suất phụ thuộc vào cách node hợp tác, thường bị ảnh hưởng bởi băng thông không đồng đều \\
+        \hline
+        Tính nhất quán dữ liệu & Dễ đảm bảo nhờ quản lý tập trung & Khó đảm bảo, dễ sinh bất đồng dữ liệu (conflict), cần giải quyết đồng bộ phức tạp \\
+        \hline
+        Ứng dụng điển hình & Hadoop HDFS, hệ thống database phân tán & BitTorrent, Blockchain, mạng file chia sẻ \\
+        \hline
+        Độ phức tạp triển khai & Đơn giản hơn, dễ kiểm soát & Phức tạp hơn do không có trung tâm điều phối \\
+        \hline
+    \end{tabular}
+    \caption{So sánh kiến trúc Master-Slave và Peer-to-Peer (P2P)}
+    \label{tab:master_slave_vs_p2p}
+\end{table}
+\textbf{Lý do chọn Master-Slave thay vì Peer-to-Peer}
+\begin{itemize}
+    \item \textbf{Ưu điểm của Master-Slave:} Dễ quản lý, đảm bảo nhất quán, hiệu năng ổn định, phù hợp với hệ thống cần lưu trữ, truy xuất dữ liệu lớn và đồng nhất (như camera an ninh).
+    \item \textbf{Nhược điểm:} Nếu Master gặp sự cố, hệ thống có thể gián đoạn (có thể cải thiện bằng cách thêm Master dự phòng).
+    \item P2P thích hợp cho các hệ thống chia sẻ file không cần tập trung, hoặc khi cần loại bỏ hoàn toàn điểm lỗi trung tâm, nhưng sẽ khó kiểm soát dữ liệu hơn.
+\end{itemize}
+\subsection{Định lý CAP trong hệ thống phân tán}
+
+Định lý CAP (Consistency, Availability, Partition tolerance) là một định lý quan trọng trong lý thuyết hệ thống phân tán, được phát biểu bởi Eric Brewer vào năm 2000. Định lý này nói về sự cân bằng giữa ba tính chất cơ bản mà một hệ thống phân tán có thể đạt được:
+
+\textbf{Ba tính chất cơ bản}
+
+\begin{itemize}
+   \item \textbf{Consistency (Tính nhất quán)}: Mọi bản sao của dữ liệu trong hệ thống phải luôn có cùng một giá trị. Điều này có nghĩa là sau mỗi lần cập nhật, mọi truy vấn dữ liệu đều phải trả về kết quả nhất quán, dù hệ thống có nhiều máy chủ phân tán.
+   
+   \item \textbf{Availability (Tính khả dụng)}: Hệ thống luôn trả lời các yêu cầu, dù là đọc hay ghi. Nếu có một yêu cầu truy cập dữ liệu, hệ thống phải đáp ứng dù dữ liệu có nhất quán hay không.
+   
+   \item \textbf{Partition tolerance (Tính chịu phân vùng)}: Hệ thống phải hoạt động bình thường dù có sự phân chia trong giao tiếp giữa các phần của hệ thống (partition). Điều này là cần thiết vì trong môi trường phân tán, các máy chủ có thể bị mất kết nối với nhau.
+\end{itemize}
+
+\textbf{Nội dung định lý}\\
+Định lý CAP khẳng định rằng trong một hệ thống phân tán, không thể đồng thời đạt được tất cả ba tính chất trên. Hệ thống phải lựa chọn tối đa chỉ hai trong ba tính chất sau:
+
+\begin{itemize}
+   \item \textbf{Consistency + Availability (CA)}: Hệ thống có tính nhất quán và khả dụng, nhưng không chịu được phân vùng mạng (partition).
+   
+   \item \textbf{Consistency + Partition tolerance (CP)}: Hệ thống có tính nhất quán và chịu được phân vùng mạng, nhưng không đảm bảo khả dụng trong mọi tình huống.
+   
+   \item \textbf{Availability + Partition tolerance (AP)}: Hệ thống có tính khả dụng và chịu được phân vùng mạng, nhưng không luôn đảm bảo tính nhất quán.
+\end{itemize}
+
+\textbf{Ý nghĩa thực tiễn}\\
+Định lý CAP đóng vai trò quan trọng trong việc thiết kế và xây dựng các hệ thống phân tán. Nó giúp các nhà phát triển và kiến trúc sư hệ thống đưa ra quyết định thiết kế phù hợp, cân nhắc lựa chọn giữa tính nhất quán, khả dụng và khả năng chịu phân vùng tùy theo yêu cầu và điều kiện cụ thể của ứng dụng.
+\subsection{ACID}
+ACID là viết tắt của bốn từ Atomicity, Consistency, Isolation và Durability, đó là bốn thuộc tính quan trọng cần đảm bảo khi thực hiện bất kỳ thao tác giao dịch nào với cơ sở dữ liệu. Cụ thể, đó là các yêu cầu về tính an toàn, tính bền vững và tính trọn vẹn cho dữ liệu. 
+\begin{itemize}
+   \item \textbf{Tính nguyên tử (Atomicity)}: Một giao dịch có nhiều thao tác khác biệt thì hoặc là toàn bộ các thao tác hoặc là không một thao tác nào được hoàn thành. Chẳng hạn việc chuyển tiền có thể thành công hay trục trặc vì nhiều lý do nhưng tính nguyên tử bảo đảm rằng một tài khoản sẽ không bị trừ tiền nếu như tài khoản kia chưa được cộng số tiền tương ứng.
+   
+   \item \textbf{Tính nhất quán (Consistency)}: Một giao dịch hoặc là sẽ tạo ra một trạng thái mới và hợp lệ cho dữ liệu, hoặc trong trường hợp có lỗi sẽ chuyển toàn bộ dữ liệu về trạng thái trước khi thực thi giao dịch.
+   
+   \item \textbf{Tính cô lập (Isolation)}: Một giao dịch đang thực thi và chưa được xác nhận phải bảo đảm tách biệt khỏi các giao dịch khác.
+   \item \textbf{Tính bền vững (Durability)}: Dữ liệu được xác nhận sẽ được hệ thống lưu lại sao cho ngay cả trong trường hợp hỏng hóc hoặc có lỗi hệ thống, dữ liệu vẫn đảm bảo trong trạng thái chuẩn xác.
+\end{itemize}
+\end{document}

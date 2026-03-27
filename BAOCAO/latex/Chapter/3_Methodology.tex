@@ -1,0 +1,386 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\section{Kiến trúc tổng thể hệ thống}
+\subsection{Giới thiệu tổng quan}
+
+Hệ thống lưu trữ dữ liệu phân tán tích hợp nhận diện hành động qua video camera an ninh được thiết kế gồm các thành phần: Người dùng (Client), Hệ thống nhận diện hành động (AI Server), Hệ thống lưu trữ phân tán (Big Data Server), Name Node(Master), Data Node (Slave) và cơ sở dữ liệu metadata.
+
+Hệ thống hoạt động trên mạng không dây và có dây. Có thể triển khai trên các máy tính cá nhân hoặc các máy tính nhúng.
+
+Các thành phần giao tiếp thông qua giao thức HTTP/REST API.
+
+Toàn bộ backend sử dụng Node.js, metadata quản lý bằng MongoDB. Nhận diện hành động sử dụng mô hình AI triển khai bằng Python (CLIP + LSTM).
+\subsection{Mô tả các thành phần}
+\begin{itemize}
+    \item \textbf{Client (Người dùng)}: Phần mềm phát hiện chuyển động của camera và web quản lý file lưu trữ.
+    \item \textbf{AI Server (Hệ thống nhận diện hành động)}: Máy chủ chứa mô hình nhận diện đã được huấn luyện dùng để nhận diện hành động được client gửi lên.
+    \item \textbf{Big Data Server (Hệ thống lưu trữ phân tán)}: Hệ thống lưu trữ các video sau khi được nhận diện được gửi lên từ server nhận diện.
+    \begin{itemize}
+        \item \textbf{Name Node}: Trung tâm điều phối, quản lý metadata (thông tin về file, vị trí lưu trữ, trạng thái node), phân phối tác vụ đọc/ghi dữ liệu cho các Data Node.
+        \item \textbf{Data Node}: Các máy chủ lưu trữ dữ liệu thực tế (video, file), thực hiện đọc/ghi theo lệnh từ Name Node, gửi heartbeat báo trạng thái.
+        \item \textbf{Cơ sở dữ liệu metadata}: Lưu trữ thông tin quản lý file, block, trạng thái node và metadata phục vụ việc truy vấn nhanh.
+    \end{itemize}
+\end{itemize}
+\subsection{ Sơ đồ kiến trúc tổng thể}
+\subsubsection{Use Case}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/SDTQ.png}
+    \caption{Sơ đồ Use Case tổng quát hệ thống}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/Nhận diện hành động use case.png}
+    \caption{Sơ đồ Use Case hệ thống nhận diện hành động}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/QL file.png}
+    \caption{Sơ đồ Use Case quản lý file}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/QL và sử dụng hệ thống.png}
+    \caption{Sơ đồ Use Case quản lý và sử dụng hệ thống}
+\end{figure}
+\subsubsection{Sơ đồ tuần tự}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/SDTT.jpg}
+    \caption{Sơ đồ tuần tự hệ thống}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/Truy xuất file.png}
+    \caption{Sơ đồ tuần truy xuất file}
+\end{figure}
+\subsection{Luồng hoạt động chính}
+Camera sẽ phát hiện chuyển động và ghi hình chuyển động sau đó gửi lên Server AI . Server AI nhận diện hành động trả về kết quả và gọi tới Server lưu trữ phân tán. Name Node sẽ kiểm tra các Data Node còn hoạt động, thực hiện lưu metadata và trả về thông tin các Data Node còn hoạt động. Sau đó dữ liệu sẽ được lưu trực tiếp lên Data Node đc Name Node chỉ định. Cuối cùng các Data Node còn lại thực hiện việc sao chép dữ liệu để đảm bảo tính toàn vẹn. Người dùng sẽ thao tác trên web để có thể truy xuất các video hành động được nhận diện.
+
+\section{Kiến trúc hệ thống nhận diện hành động thông qua video}
+\subsection{Tổng quan hệ thống}
+Module nhận diện hành động có nhiệm vụ phân tích các video từ camera an ninh để xác định hành động diễn ra trong đoạn video.Kết quả nhận diện sẽ được gửi về hệ thống lưu trữ, gắn nhãn hành động cho video để phục vụ tìm kiếm, cảnh báo hoặc báo cáo.
+\subsection{Sơ đồ luồng hoạt động}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Figure/CLIPLSTM.png}
+    \caption{Mô hình CLIP + LSTM }
+\end{figure}
+Người dùng sẽ tải lên hệ thống video về hành động. Video này sẽ được gửi đến mô hình, tại đây 20 khung hình đại diện sẽ được lấy ngẫu nhiên hoặc cách đều từ video, sau đó resize về kích thước 224×224 và chuẩn hóa giá trị RGB theo chuẩn của ImageNet. Các khung hình này tiếp tục được đưa vào CLIP image encoder để trích xuất đặc trưng, thu được một ma trận có kích thước 20×512, với mỗi vector 512 chiều đại diện cho một khung hình.
+
+Ma trận đặc trưng này sẽ đi qua các lớp LSTM tuần tự gồm: LSTM với 128 units, tiếp theo là Dropout 0.3, tiếp đến là LSTM với 64 units và Dropout 0.3. Cuối cùng, output được đưa vào một lớp Dense với activation Softmax để tính toán xác suất của từng class hành động. Nhãn có xác suất cao nhất sẽ được chọn làm kết quả dự đoán. 
+\subsection{Công nghệ sử dụng}
+\subsubsection{Ngôn ngữ \& Framework:}
+\textbf{Python} là một ngôn ngữ lập trình bậc cao, thông dịch, nổi bật với cú pháp đơn giản, dễ đọc và dễ học. Python hỗ trợ lập trình hướng đối tượng, lập trình hàm và rất mạnh trong lĩnh vực khoa học dữ liệu, trí tuệ nhân tạo (AI), xử lý ảnh, tự động hóa, phát triển web,…
+Với hệ sinh thái thư viện phong phú, Python được sử dụng rộng rãi trong nghiên cứu và triển khai các hệ thống AI, học sâu (Deep Learning).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/python.png}
+    \caption{Python}
+\end{figure}
+\textbf{PyTorch} là một thư viện mã nguồn mở dành cho học máy (machine learning) và học sâu (deep learning), được phát triển bởi Facebook AI Research. PyTorch cung cấp một framework linh hoạt, dễ sử dụng để xây dựng, huấn luyện và triển khai các mô hình mạng nơ-ron nhân tạo, đặc biệt mạnh mẽ cho nghiên cứu AI nhờ khả năng “dynamically compute graph” (tính toán động).
+PyTorch được sử dụng rộng rãi cho các bài toán xử lý ảnh, xử lý ngôn ngữ tự nhiên, nhận diện hành động trong video, v.v.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/pytorch.png}
+    \caption{Pytorch}
+\end{figure}
+\textbf{Flask} là một framework nhẹ (micro web framework) dành cho phát triển ứng dụng web với ngôn ngữ Python. Flask cho phép xây dựng các API nhanh chóng, dễ dàng và linh hoạt, rất phù hợp cho việc triển khai các dịch vụ AI/ML như REST API, backend cho ứng dụng web, hoặc các module xử lý nghiệp vụ riêng biệt.
+Do tính đơn giản, nhẹ, Flask thường được sử dụng để tạo các server phục vụ mô hình AI, nhận và trả dữ liệu dưới dạng HTTP/JSON.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/flask.png}
+    \caption{Flask}
+\end{figure}
+\subsubsection{CLIP model}
+CLIP (Contrastive Language–Image Pretraining) là một mô hình học sâu mã nguồn mở do OpenAI phát triển, có khả năng kết nối thông tin giữa ảnh và văn bản. Mô hình được thiết kế để xử lý các tác vụ như phân loại hình ảnh theo văn bản mô tả (zero-shot image classification), tìm kiếm ảnh theo văn bản (text-to-image retrieval), và hiểu nội dung hình ảnh theo ngữ cảnh. CLIP được xây dựng bằng Python, sử dụng các framework như PyTorch, với hai thành phần chính: Text Encoder và Image Encoder, hoạt động song song để mã hóa ảnh và văn bản vào cùng một không gian vector.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/AnhXaHinhAnhVaVanBanClip.png}
+    \caption{Sơ đồ hoạt động của mô hình CLIP}
+\end{figure}
+Mô hình CLIP có 2 thành phần chính là Text Encoder và Image Encoder. Phần Text Encoder sử dụng Transformer - một kiến trúc cách mạng trong NLP từ năm 2017, nhận đầu vào là văn bản và mã hoá thành vector đặc trưng trong không gian embedding.\\
+\textbf{Text Encoder}
+    \begin{itemize}
+        \item Chuyển văn bản thành các đơn vị token để xử lý tuần tự.
+        \item Mỗi token sẽ được ánh xạ sang một vecto embedding cố định chiều để biểu diễn từ dưới dạng vector số học có thể tính toán được.
+        \item Thêm thông tin vị trí của token trong câu vào embedding.
+        \item Truyền qua các lớp transformer để nắm bắt ngữ nghĩa tổng thể và quan hệ giữa các tự trong câu:
+        \begin{itemize}
+            \item Multi-head Self Attention: Mỗi token có thể tập trung vào các token khác trong câu để hiểu ngữ cảnh.
+            \item Feed Forward Network: Mỗi token được truyền qua một mạng con để tính toán đặc trưng sâu hơn.
+            \item Layer Normalization và Residual Connection: Giúp quá trình lan truyền gradient ổn định và nhanh hơn.
+        \end{itemize}
+        \item Tóm tắt ngữ nghĩa toàn bộ câu thành một vector duy nhất bằng cách lấy vector của token [EOS] làm embedding đại diện cho toàn câu.
+        \item Chuẩn hóa Embedding.
+    \end{itemize}
+\textbf{Image Encoder}
+\begin{itemize}
+        \item Tiền xử lý resize ảnh về 224x224 và đổi ảnh về dạng tensor sau đó chuẩn hoá pixel về đúng phân phối.
+        \item Chia ảnh thành các patch nhỏ (32x32) sẽ được 49 patch, mỗi patch được flatten thành vector 1D và chuyển qua lớp linear projection để ebedding vector cùng kích thước 768 giúp transformer hiểu và xử lý dữ liệu hình ảnh như dữ liệu vector.
+        \item Vì transformer không xử lý dữ liệu dạng không tuần tự như CNN nên cần thêm vector positional encoding vào mỗi embedding patch vector để đảm bảo thông tin vị trí không gian.
+        \item Thêm token đặc biệt [CLS] để đại diện cho toàn bộ ảnh.
+        \item Truyền qua các lớp transformer:
+        \begin{itemize}
+            \item Multi-head Self Attention: Mỗi token có thể tập trung vào các token khác trong câu để hiểu ngữ cảnh.
+            \item Feed Forward Network: Mỗi token được truyền qua một mạng con để tính toán đặc trưng sâu hơn.
+            \item Layer Normalization và Residual Connection: Giúp quá trình lan truyền gradient ổn định và nhanh hơn.
+        \end{itemize}
+        \item Lấy output embedding
+    \end{itemize}
+\subsubsection{LSTM}
+LSTM (Long Short-Term Memory) là một biến thể của mạng nơ-ron hồi tiếp (RNN), được thiết kế để xử lý và học các chuỗi dữ liệu có độ dài thay đổi, đồng thời giải quyết vấn đề vanishing gradient thường gặp trong RNN truyền thống. LSTM đặc biệt hiệu quả trong việc ghi nhớ các thông tin quan trọng trong thời gian dài, nhờ vào cơ chế bộ nhớ (memory cell) và các cổng điều khiển.
+Cấu trúc của LSTM bao gồm ba loại cổng chính:
+\begin{itemize}
+    \item \textbf{Cổng quên (Forget Gate):} quyết định thông tin nào trong trạng thái trước cần được loại bỏ.
+    \item \textbf{Cổng vào (Input Gate):} xác định thông tin mới nào nên được thêm vào bộ nhớ.
+    \item \textbf{Cổng đầu ra (Output Gate):} quyết định phần nào của trạng thái bộ nhớ sẽ được xuất ra ngoài làm đầu ra tại bước hiện tại.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/LSTMKienTruc.png}
+    \caption{Kiến trúc LSTM}
+\end{figure}
+Trong dự án này sẽ có 2 lớp LSTM:
+\begin{itemize}
+    \item Lớp LSTM 128 units tiếp nhận chuỗi vector đặc trưng từ ViT, từng bước xử lý thông tin ở từng time step (tương ứng với từng frame), đồng thời duy trì và cập nhật trạng thái ẩn (hidden state) và trạng thái bộ nhớ (cell state) nhằm lưu giữ các thông tin quan trọng về sự biến đổi của hành động trong video. Mục đích học các mẫu chuyển động ngắn hạn giữa các frame liên tiếp.
+    \item Lớp LSTM 64 units nhận output từ lớp trước và tiếp tục xử lý, cho phép mô hình học được các mẫu chuyển động phức tạp hơn cũng như mối liên hệ dài hạn giữa các frame để khái quát và liên kết các chuyển động thành động tác hoàn chỉnh có tính logic và liên tục theo thời gian.
+\end{itemize}
+\subsection{Tập dữ liệu huấn luyện} 
+Mô hình CLIP + LSTM được thiết kế nhằm hỗ trợ và nâng cao khả năng giám sát an ninh trong hệ thống lưu trữ phân tán cho camera an ninh, với trọng tâm là nhận diện các hành động trong video giám sát an ninh. Hệ thống được huấn luyện trên tập dữ liệu UCF-101. UCF-101 là tập dữ liệu lớn gồm các video về các hành động của con người gồm 101 loại hành động khác nhau được thu thập từ những hoạt động thực tế được quya tỏng các điều kiện khác nhau với độ phân giải khác nhau. Các video được phân theo các thư mục theo các nhãn, các video có định dạng avi.
+\subsection{Huấn luyện và đánh giá mô hình}
+\textbf{Phần cứng:} Google Colab Pro (GPU A-100)
+\\
+\textbf{Thời gian huấn luyện:} 6h
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Figure/PhanCung.png}
+    \caption{Phần cứng huấn luyện}
+\end{figure}
+Dựa trên các biểu đồ đánh giá, mô hình CLIP-LRCN đạt độ chính xác rất cao và hội tụ nhanh chóng. Loss giảm đều và không xuất hiện overfitting. Confusion matrix thể hiện mô hình phân loại chính xác với tỷ lệ nhầm lẫn thấp giữa các lớp hành động, chứng minh khả năng tổng quát hóa tốt của mô hình trên tập dữ liệu UCF-101.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/LoadDuLieu.png}
+    \caption{Load dữ liệu của tập UCF-101}
+\end{figure}
+Mô hình CLIP trích xuất đặc trưng của dữ liệu sau đó đưa qua lớp LSTM để học.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/TrichXuatDacTrung.png}
+    \caption{Trích xuất đặc trưng}
+\end{figure}
+Quá trình học cho thấy độ chính xác cao, tỉ lệ loss thấp, thử nghiệm nhận diện khá tốt các hành động rõ ràng.
+\begin{itemize}
+    \item accuracy: 0.9852 
+    \item loss: 0.0634
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/Traning.png}
+    \caption{Huấn luyện mô hình}
+\end{figure}
+
+\section{Kiến trúc hệ thống lưu trữ dữ liệu phân tán}
+\subsection{Tổng quan hệ thống}
+Hệ thống được xây dựng dựa trên kiến trúc Master - Slave, trong đó Name Node có vai trò là Master chịu trách nhiệm điều phối các việc được giao và các Data Node là các slave chịu trách nhiệm thực hiện tác tác vụ được Name Node giao. \\
+\textbf{Vai trò của Name Node (Master): }
+\begin{itemize}
+    \item Name Node không lưu trữ thực tế mà chỉ lưu trữ và quản lý metadata bao gồm:
+    \begin{itemize}
+        \item Tên tệp.
+        \item Vị trí các khối dữ liệu.
+        \item Các thuộc tính của tệp.
+    \end{itemize}
+    \item Điều phối các hoạt động ở Data Node như đọc/ghi dữ liệu.
+    \item Theo dõi trạng thái của các Data Node (Check heartbeat).
+\end{itemize}
+\textbf{Vai trò của Data Node (Slave): }
+\begin{itemize}
+    \item Data Node lưu trữ dữ liệu thực tế dưới dạng các khối dữ liệu được phối trên nhiều Data Node khác nhau
+    \item Thực hiện các lệnh đọc/ghi dữ liệu và chỉ mục tệp vào ổ đĩa từ phía người dùng thông qua NameNode.
+    \item Gửi báo cáo trạng thái (Heartbeats) và danh sách khối dữ liệu (Block Reports) đến NameNode định kỳ.
+    \item Nhân bản các khối dữ liệu sang các Data Node khác
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/So do TQ.png}
+    \caption{Hệ thống lưu trữ dữ liệu phân tán }
+\end{figure}
+\subsection{Công nghệ sử dụng}
+\subsubsection{Khái niệm về Node.js}
+Node.js là một môi trường chạy mã nguồn mở được xây dựng trên công cụ V8 JavaScript Engine của Google. Được phát triển bởi Ryan Dahl và ra mắt vào năm 2009, Node.js đã trở thành một công nghệ phổ biến nhờ hiệu suất cao và khả năng mở rộng mạnh mẽ. Node.js có thể chạy được trên nhiều nền tảng và cung cấp các thư viện, các framework phong phú hỗ trợ cho việc lập trình. Trong dự án này nodejs được sử dụng để xây dựng máy chủ cho hệ thống lưu trữ phân tán
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figure/nodejs.jpg}
+        \caption{Nodejs}
+    \end{figure}
+\subsubsection{Khái niệm về MongoDB}
+MongoDB là một dạng NoSQL database thiên hướng document. MongoDB là chương trình cơ sở dữ liệu mã nguồn mở được thiết kế theo kiểu hướng đối tượng trong đó các bản được cấu trúc một cách linh hoạt cho phép các dữ liệu lưu trên bảng không cần phải tuân theo một dạng cấu trúc nhất định nào. Chính do cấu trúc linh hoạt này nên MongoDB có thể được dùng để lưu trữ các dữ liệu có cấu trúc phức tạp và đa dạng, không cố định. Trong dự án này MongoDB được sử dụng để lưu trữ metadata và MongoDB tương tích tốt với Nodejs nên được lựa chọn ưu tiên sử dụng
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figure/mongodb.png}
+        \caption{MongoDB}
+    \end{figure}
+\subsubsection{Metadata}
+
+\textbf{1. Khái niệm Metadata}  
+
+Metadata, hay còn gọi là siêu dữ liệu, là thông tin mô tả dữ liệu. Nó cung cấp ngữ cảnh cho dữ liệu thô, giúp định nghĩa, cấu trúc và tổ chức dữ liệu để hỗ trợ việc truy cập, quản lý và sử dụng hiệu quả hơn. Metadata có thể hiểu là “dữ liệu về dữ liệu,” chứa các thuộc tính như tên, loại, định dạng, nguồn gốc, hoặc mô tả dữ liệu.
+
+Ví dụ: Trong một hệ thống tệp phân tán, metadata có thể bao gồm:  
+\begin{itemize}
+    \item Tên tệp.
+    \item Vị trí các khối dữ liệu của tệp.
+    \item Kích thước tệp.
+    \item Quyền truy cập và thời gian chỉnh sửa gần nhất.
+\end{itemize}
+
+\textbf{2. Vai trò của Metadata trong hệ thống lưu trữ dữ liệu}  
+
+Metadata đóng vai trò quan trọng trong quản lý và tối ưu hóa dữ liệu. Một số vai trò chính bao gồm:  
+\begin{itemize}
+    \item \textit{Tổ chức dữ liệu:} Metadata giúp phân loại và cấu trúc dữ liệu một cách hợp lý, dễ dàng tìm kiếm và truy cập.
+    \item \textit{Quản lý dữ liệu:} Metadata cung cấp thông tin giúp quản trị viên theo dõi các thuộc tính và trạng thái của dữ liệu, như quyền truy cập hoặc lịch sử chỉnh sửa.
+    \item \textit{Tăng hiệu suất:} Bằng cách lưu trữ thông tin về vị trí dữ liệu, metadata giúp hệ thống truy cập nhanh hơn mà không cần phải đọc toàn bộ dữ liệu gốc.
+    \item \textit{Đảm bảo tính toàn vẹn và nhất quán:} Metadata hỗ trợ theo dõi trạng thái của dữ liệu trong hệ thống phân tán, đảm bảo sự đồng bộ giữa các bản sao.
+\end{itemize}
+
+\textbf{3. Các loại Metadata chính}  
+
+Metadata được phân loại theo các chức năng sau:  
+\begin{itemize}
+    \item \textit{Metadata mô tả (Descriptive Metadata):} Cung cấp thông tin mô tả về nội dung dữ liệu, chẳng hạn như tiêu đề, tác giả, hoặc từ khóa.
+    \item \textit{Metadata cấu trúc (Structural Metadata):} Xác định cấu trúc và mối quan hệ giữa các thành phần dữ liệu, ví dụ như thứ tự của các chương trong tài liệu hoặc liên kết giữa các tệp dữ liệu.
+    \item \textit{Metadata hành chính (Administrative Metadata):} Cung cấp thông tin về quyền truy cập, lịch sử sửa đổi, hoặc dữ liệu kỹ thuật như định dạng hoặc kích thước.
+\end{itemize}
+
+\textbf{4. Ứng dụng của Metadata trong hệ thống phân tán}  
+
+Trong các hệ thống lưu trữ dữ liệu phân tán, như Hadoop Distributed File System (HDFS) hoặc các hệ thống cơ sở dữ liệu NoSQL:  
+\begin{itemize}
+    \item \textit{Quản lý vị trí dữ liệu:} Metadata được sử dụng để theo dõi vị trí lưu trữ của các khối dữ liệu trên các node khác nhau.
+    \item \textit{Tối ưu hóa truy cập dữ liệu:} Metadata giúp định tuyến yêu cầu đọc/ghi tới các node thích hợp, giảm độ trễ và tăng hiệu suất.
+    \item \textit{Đảm bảo tính sẵn sàng:} Khi một node bị lỗi, metadata cho phép hệ thống tự động chuyển hướng yêu cầu tới bản sao dữ liệu ở các node khác.
+\end{itemize}
+
+\textbf{5. Thách thức trong quản lý Metadata}  
+
+Dù có vai trò quan trọng, việc quản lý metadata cũng đối mặt với một số thách thức:  
+\begin{itemize}
+    \item \textit{Khối lượng metadata lớn:} Trong các hệ thống phân tán lớn, lượng metadata cần quản lý có thể rất lớn, đòi hỏi các chiến lược lưu trữ và xử lý hiệu quả.
+    \item \textit{Độ trễ trong cập nhật:} Khi dữ liệu thay đổi, metadata phải được cập nhật ngay lập tức để đảm bảo tính nhất quán.
+    \item \textit{Bảo mật:} Metadata thường chứa thông tin nhạy cảm, cần được bảo vệ khỏi truy cập trái phép.
+\end{itemize}
+
+Metadata không chỉ là thành phần hỗ trợ mà còn đóng vai trò cốt lõi trong việc quản lý dữ liệu, đặc biệt trong các hệ thống lưu trữ phân tán. Hiểu và quản lý tốt metadata giúp tăng hiệu quả vận hành và đảm bảo tính sẵn sàng, nhất quán của hệ thống.
+\subsection{Quy trình ghi dữ liệu}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/So do Write.drawio.png}
+    \caption{Sơ đồ quy trình ghi dữ liệu}
+\end{figure}
+\textbf{Quy trình ghi dữ liệu gồm các bước sau:} 
+\begin{itemize}
+    \item\textbf{B1: } Client gửi yêu cầu tạo một file đến hệ thống với kích thước và tên của file.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/GuiYeuCauGhi.drawio.png}
+        \caption{Client gửi yêu cầu ghi dữ liệu đến Name Node}
+    \end{figure}
+    \item\textbf{B2: } Name Node sẽ tạo ra metadata, kiểm tra tình trạng của các Data Node bằng cách kiểm tra heartbeat của các Data Node. Dựa vào kích thước của file, Name Node chia file thành các khối dữ liệu.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/GhiCheckHeartbeat.drawio.png}
+        \caption{Name Node kiểm tra tình trạng các Data Node và tạo metadata }
+    \end{figure}
+    \item\textbf{B3: } Name Node sẽ trả về cho client các thông tin quan trọng để lưu dữ liệu thực tế trên Data Node ví dụ như dữ liệu sẽ chia thành bao nhiêu khối dữ liệu, những DataNode nào sẵn sàng để lưu dữ liệu, khối nào sẽ được lưu vào Data Node nào và số nhân bản của nó.
+   \begin{figure}[H]
+        \includegraphics[width=1\linewidth]{Figure/GhiNameNodeTraVeClient.drawio.png}
+        \caption{Name Node trả về cho Client các thông tin để lưu dữ liệu }
+    \end{figure}
+    \clearpage
+    \item\textbf{B4: } Dựa vào các thông tin mà Name Node phản hồi về, Client sẽ chia file thành các khối dữ liệu.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\linewidth]{Figure/SplitFile.drawio.png}
+        \caption{Client chia File thành các khối dứ liệu }
+    \end{figure}
+    \item\textbf{B5:} Client gửi yêu cầu ghi và các khối dữ liệu đến các Data Node đã được Name Node giao việc. Các Data Node sau khi nhận được các khối dữ liệu từ Client sẽ thực hiện đánh và lưu chỉ mục tệp, ghi các khối dữ liệu vào ổ đĩa cứng và lưu đường dẫn dữ liệu vào cơ sở dữ liệu trực tuyến. Đồng thời các Data Node sẽ thực hiện nhân bản các khối dữ liệu cho nhau.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/GhiFileVaoDataNode.drawio (1).png}
+        \caption{Data Node phản hồi lại cho Client }
+    \end{figure}
+    \item\textbf{B6:} Sau khi ghi dữ liệu thành công, Data Node sẽ trả về cho Client phản hồi ghi dữ liệu thành công, ngược lại nếu xảy ra bất kì lỗi nào trong quá trình ghi dữ liệu thì Data Note sẽ trả về phản hồi ghi dữ liệu thất bại.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/DataNodePhanHoi.drawio.png}
+        \caption{Ghi dữ liệu vào Data Node }
+    \end{figure}
+\end{itemize}
+
+
+
+\subsection{Quy trình đọc dữ liệu}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/So do Read.drawio.png}
+    \caption{Sơ đồ quy trình đọc dữ liệu }
+\end{figure}
+\textbf{Quy trình đọc dữ liệu gồm các bước sau:} 
+\begin{itemize}
+    \item\textbf{B1:} Client gửi yêu cầu đọc và tên tệp muốn đọc cho Name Node. 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/GuiYeuCauDoc.drawio.png}
+        \caption{Client gửi yêu cầu đọc đến cho Name Node }
+    \end{figure}
+    \item\textbf{B2:} Name Node sẽ kiểm tra tình trạng của các Data Node bằng cách kiểm tra heartbeat của các Data Node, sau đó Name Node kiểm tra metadata đã lưu.
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/DocKiemTraHeartbeat.drawio.png}
+        \caption{NameNode kiểm tra tình trạng của các Data Node và metadata đã lưu }
+    \end{figure}
+    \item\textbf{B3:} Nếu Name Node phát hiện có metadata đã lưu trữ thì Name Node sẽ trả về metadata và thông tin các Data Node đang còn hoạt động mà có lưu trữ dữ liệu cho Client. Còn ngược lại Name Node không phát hiện được ra metadata trong cơ sở dữ liệu đã lưu trữ thì sẽ phản hồi cho Client lỗi đọc dữ liệu 
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/DocNameNodeTraVe.drawio.png}
+        \caption{Name Node phản hồi lại cho Client }
+    \end{figure}
+    \item\textbf{B4:} Client thực hiện đọc file trên Data Node bằng cách gửi yêu cầu đọc kèm theo tên file. Data Node sẽ kiểm tra đường dẫn dữ liệu trên Database Online, kiểm tra tệp và chỉ mục tệp trong ổ đĩa cứng.
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/DocFileTrenDataNode.drawio.png}
+        \caption{Client thực hiện gửi yêu cầu đọc file đến Data Node }
+    \end{figure}
+    \item\textbf{B5:} Data Node trả về cho client các khối dữ liệu mà client mong muốn và chỉ mục tệp để ghép nối các khối dữ liệu.
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{Figure/DocDataNodeTraVe.drawio.png}
+        \caption{Data Node trả về các khối dữ liệu cho Client }
+    \end{figure}
+    \item\textbf{B6:} Client thực hiện ghép các khối dữ liệu lại dựa trên chỉ mục tệp được Data Node cung cấp, cuối cùng chuyển từ mã nhị phân thành tệp hoàn chỉnh ghép với đuôi tệp đã được lưu trữ và tải xuống client.
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.4\linewidth]{Figure/MergeFile.drawio.png}
+        \caption{Client ghép nối các khối dữ liệu và chuyển thành file hoàn chỉnh }
+    \end{figure}
+\end{itemize}
+\section{Giao diện người dùng}
+\subsection{Tổng quan}
+Giao diện dự án cho phép người dùng thao tác truy xuất file được lưu trữ tại hệ thống phân tán.
+
+Giao diện của dự án này được xây dựng theo hướng Multi-application. Sẽ chia thành các module quản lý
+\subsection{Công nghệ sử dụng}
+Angular là một framework mã nguồn mở do Google phát triển, dùng để xây dựng các ứng dụng web động, phức tạp với giao diện người dùng hiện đại. Angular sử dụng ngôn ngữ TypeScript, cung cấp kiến trúc component, hệ thống routing, binding dữ liệu hai chiều, cùng các công cụ hỗ trợ kiểm thử và phát triển nhanh.
+
+Nhờ khả năng mở rộng, tổ chức mã nguồn tốt và tích hợp sẵn nhiều tính năng mạnh mẽ, Angular rất phù hợp để phát triển các hệ thống web lớn, cần tương tác nhiều với người dùng và giao tiếp với backend qua API.
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{Figure/angular.jpg}
+        \caption{Angular}
+    \end{figure}
+\end{document}

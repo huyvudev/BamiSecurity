@@ -1,0 +1,211 @@
+\documentclass[../main.tex]{subfiles}
+\usepackage{booktabs}
+\begin{document}
+
+\section{Tóm tắt}
+
+Trong đồ án này, tôi đã nghiên cứu và đề xuất giải pháp xây dựng hệ thống lưu trữ cơ sở dữ liệu phân tán dựa trên kiến trúc Master - Slave, kết hợp với hệ thống nhận diện hành động người từ video. Mỗi thành phần trong hệ thống đảm nhiệm một vai trò cụ thể: Name Node (Master) điều phối, phân phối tác vụ và quản lý trạng thái các nút; trong khi các Data Node (Slave) thực thi tác vụ, xử lý dữ liệu và lưu trữ thông tin phân tán.
+
+Hệ thống được tích hợp mô hình nhận diện hành động sử dụng kết hợp CLIP (Contrastive Language-Image Pretraining) để trích xuất đặc trưng từ từng khung hình video và LSTM (Long Short-Term Memory) để xử lý chuỗi đặc trưng và phân loại hành động. Mô hình đã được huấn luyện trên tập dữ liệu UCF-101 và cho kết quả khả quan với độ chính xác cao trên tập kiểm thử.
+
+Hệ thống được triển khai trên một mạng máy tính thực tế gồm 1 Name Node và 2 Data Node. Thực nghiệm cho thấy hệ thống đảm bảo khả năng chịu lỗi tốt, hiệu năng xử lý ổn định và tính nhất quán dữ liệu cao giữa các máy chủ. Khi một node gặp sự cố, các node còn lại vẫn duy trì hoạt động ổn định mà không làm gián đoạn hệ thống.
+
+\section{Đánh giá hệ thống lưu trữ phân tán}
+\subsection{Hiệu suất}
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{Định dạng file} & \textbf{Dung lượng file} & \textbf{Lần tải lên} & \textbf{Thời gian} & \textbf{Thời gian trung bình} \\
+\hline
+\multirow{3}{*}{JPG} & \multirow{3}{*}{95.5KB} & 1 & 0.007s & \multirow{3}{*}{0.0073s} \\
+& & 2 & 0.008s & \\
+& & 3 & 0.007s & \\
+\hline
+\multirow{3}{*}{PNG} & \multirow{3}{*}{30.7MB} & 1 & 2.451s & \multirow{3}{*}{2.3356s} \\
+& & 2 & 2.229s & \\
+& & 3 & 2.387s & \\
+\hline
+\multirow{3}{*}{MP4} & \multirow{3}{*}{461.4MB} & 1 & 37.771s & \multirow{3}{*}{38.942s} \\
+& & 2 & 40.028s & \\
+& & 3 & 39.028s & \\
+\hline
+\multirow{3}{*}{MP3} & \multirow{3}{*}{204MB} & 1 & 16.345s & \multirow{3}{*}{16.078s} \\
+& & 2 & 16.021s & \\
+& & 3 & 15.870s & \\
+\hline
+\multirow{3}{*}{FLV} & \multirow{3}{*}{670MB} & 1 & 53.892s & \multirow{3}{*}{53.968s} \\
+& & 2 & 54.021s & \\
+& & 3 & 53.992s & \\
+\hline
+\end{tabular}
+\caption{Bảng thống kê thời gian tải lên theo định dạng file}
+\end{table}
+\subsubsection{Độ trễ} Độ trễ của hệ thống được đo trong các thử nghiệm mạng LAN, cho thấy thời gian phản hồi trung bình của các truy vấn là dưới 50ms, đảm bảo khả năng đáp ứng nhanh với các yêu cầu từ Client. Tuy nhiên, khi triển khai trên mạng WAN với độ trễ cao hơn, cần áp dụng các thuật toán tối ưu hóa hoặc cơ chế nén dữ liệu để giảm thời gian xử lý. \\
+\subsubsection{Thông lượng} Hệ thống đạt thông lượng tối đa khoảng 100Mbps trong môi trường mạng LAN khi sử dụng cấu hình 1 Master và 2 Slave. Thông lượng này phù hợp với các ứng dụng tầm trung, nhưng có thể tăng lên bằng cách bổ sung thêm Slave tối ưu khoảng cách vật lý và cải thiện quy giao tiếp giữa các thành phần bằng các hệt thống mạng tiên tiến hỗ trợ tốc độ cao hơn. Trong môi trường mạng thực tế, việc duy trì thông lượng này có thể đòi hỏi hạ tầng mạnh hơn và tối ưu hơn.
+\subsection{Độ tin cậy}
+Hệ thống đảm bảo khả năng chịu lỗi nhờ cơ chế nhân bản dữ liệu (Replication) trên các Data Node để đảm nhân bản các bản sao dữ liệu. Khi một Slave gặp sự cố, các Slave còn lại vẫn đảm duy trì được hoạt động bình thường và tự động tái tạo các bản sao dữ liệu của Slave gặp sự cố vào các Slave còn hoạt động. Không gây mất mát dữ liệu và gián đoạn hệ thống.
+
+\subsection{Tính mở rộng}
+Hệ thống dễ dàng nâng cấp và mở rộng quy mô xử lý khi lượng dữ liệu tăng lên. Hệ thống hỗ trợ hai hình thức mở rộng chính: Scale-up bằng cách nâng cấp tài nguyên phần cứng của các node hiện có (như CPU, RAM, storage), và Scale-out thông qua việc thêm các Data Node mới vào hệ thống. Kiến trúc Master-Slave cho phép phân phối tải công việc và dữ liệu đồng đều giữa các node, sử dụng các thuật toán cân bằng tải để tối ưu hiệu suất. Name Node tự động phát hiện và tích hợp các Data Node mới vào hệ thống, phân phối lại dữ liệu và công việc một cách linh hoạt, đảm bảo hệ thống có thể mở rộng theo chiều ngang mà không gây gián đoạn hoạt động.
+
+\subsection{Tính khả dụng}
+Hệ thống hoạt động liên tục ngay cả khi một máy chủ gặp sự cố, đảm bảo tính sẵn sàng cao. Mỗi Node có một nhiệm vụ Name Node thực hiện việc điều phối và quản lý còn Data Node thực hiện việc lưu trữ dữ liệu. Cơ chế heartbeat kiểm tra liên tục tình trạng của các Data Node đảm bảo chúng hoạt động bình thường, khi có 1 Data Node gặp sự cố thì quy trình failover sẽ được kích hoạt đê chuyển đổi sang các Data Node dự phòng và đồng thời kích hoạt cơ chế nhân bản (Replication) để tự động tái tạo các bản sao đã mất để đảm bảo tính khả dụng
+
+\subsection{Tính bảo mật}
+Hiện tại, hệ thống chưa triển khai các cơ chế bảo mật nâng cao, như mã hóa dữ liệu hoặc xác thực người dùng, dẫn đến nguy cơ rủi ro trong môi trường mạng lớn.
+
+\subsection{Độ phức tạp}
+Độ phức tạp trong hệ thống BigData với kiến trúc Master-Slave được thể hiện qua nhiều khía cạnh của việc thiết kế, triển khai và vận hành hệ thống. Về mặt kiến trúc, hệ thống phải xử lý các vấn đề phức tạp như đồng bộ hóa dữ liệu giữa các node, quản lý tính nhất quán, xử lý các tình huống phân mảnh mạng và trường hợp lỗi. Về mặt quản lý, cần có cơ chế theo dõi và điều phối hiệu quả giữa Master và các Slave node, trong đó Master phải xử lý song song nhiều tác vụ như phân phối công việc, giám sát trạng thái, phục hồi lỗi và cân bằng tải. Độ phức tạp còn tăng lên theo số lượng node trong hệ thống, đòi hỏi phải có chiến lược tối ưu hóa hiệu suất và quản lý tài nguyên phù hợp, cũng như việc xử lý các tình huống tranh chấp và deadlock có thể phát sinh.
+\subsection{Hiệu quả chi phí}
+Hệ thống đạt hiệu quả cao trong trong khi chi phí khá phù hợp khi triển khai về phần cứng. Do sử dụng mô hình Master - Slave nên chỉ Name Node (Master) yêu cầu cấu hình máy cao để điều phối và quản lý, còn các Data Node (Slave) chỉ cần cấu hình vừa phải để thực hiện lưu dữ liệu. Việc nâng cấp mở rộng cũng là một điểm cộng cho hiệu quả và chi phí của hệ thống, quản trị viên có thể dễ dàng nâng cấp mở rộng mà ko cần bỏ đi bất cứ tài nguyên phần cứng cũ nào hệ thống trành gây thất thoát lãng phí như các mô hình khác. 
+
+\subsection{Khả năng tích hợp với các hệ thống khác}
+Hệ thống hiện tại có thể tương thích với các thiết bị hỗ trợ giao thức truyền thông qua internet như https, API web services, và các thiết bị hỗ trợ cổng LAN. Cần phải nâng cấp và cái thiện để có thể tích hợp với các thiết bị mạng không dây và mạng internet để hướng đến tích hợp với các hệ thống Big Data, hệ thống Camera an ninh hoặc ứng dụng IoT.
+\section{Đánh giá hệ thống nhận diện hành động}
+Trong quá trình thực nghiệm, hệ thống nhận diện hành động kết hợp CLIP để trích xuất đặc trưng khung hình và LSTM để phân tích chuỗi hành động đã đạt được kết quả khả quan:
+\begin{itemize}
+    \item \textbf{Độ chính xác trung bình} trên tập kiểm thử đạt 98\%, với macro và weighted average đều ở mức 0.98.
+    \item \textbf{Các class phổ biến, đặc trưng rõ ràng} như BoxingPunchingBag, TennisSwing, Skijet… đều đạt Precision, Recall và F1-score tuyệt đối 1.00.
+    \item \textbf So với phương pháp truyền thống sử dụng {CNN-based feature extractor} (như VGG, ResNet), mô hình CLIP:
+    \begin{itemize}
+        \item \textbf{Tiết kiệm bộ nhớ hơn} (vì CLIP encode ảnh về vector 512-dim gọn nhẹ)
+        \item \textbf{Huấn luyện nhanh hơn}
+        \item \textbf{Độ chính xác cao hơn trên tập UCF-101}
+        \item \textbf{Phù hợp với hệ thống nhỏ cấu hình thấp} nhờ inference nhanh và chiếm ít tài nguyên.
+    \end{itemize}
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/accuracy.png}
+    \caption{Độ chính xác của tập validate và tập train}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/loss.png}
+    \caption{Loss của tập validate và tập train}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figure/MaTranNhamLan.png}
+    \caption{Confusion matrix}
+\end{figure}
+\begin{longtable}{lcccc}
+\caption{Precision, Recall, F1-score và Support cho từng class}\\
+\toprule
+\textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{Support} \\
+\midrule
+\endfirsthead
+
+\multicolumn{5}{c}%
+{{\bfseries \tablename\ \thetable{} -- tiếp theo}} \\
+\toprule
+\textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{Support} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+ApplyEyeMakeup & 1.00 & 0.93 & 0.96 & 40 \\
+ApplyLipstick & 1.00 & 1.00 & 1.00 & 30 \\
+Archery & 1.00 & 0.97 & 0.99 & 35 \\
+BabyCrawling & 1.00 & 1.00 & 1.00 & 28 \\
+BandMarching & 1.00 & 1.00 & 1.00 & 31 \\
+BaseballPitch & 1.00 & 0.97 & 0.99 & 40 \\
+Basketball & 0.97 & 1.00 & 0.99 & 38 \\
+BasketballDunk & 1.00 & 0.96 & 0.98 & 27 \\
+BenchPress & 1.00 & 1.00 & 1.00 & 43 \\
+Biking & 1.00 & 0.97 & 0.99 & 38 \\
+Billiards & 1.00 & 1.00 & 1.00 & 36 \\
+BlowDryHair & 0.92 & 0.96 & 0.94 & 24 \\
+BlowingCandles & 1.00 & 1.00 & 1.00 & 19 \\
+BodyWeightSquats & 0.96 & 1.00 & 0.98 & 23 \\
+Bowling & 1.00 & 0.98 & 0.99 & 43 \\
+BoxingPunchingBag & 1.00 & 1.00 & 1.00 & 43 \\
+BoxingSpeedBag & 1.00 & 1.00 & 1.00 & 37 \\
+BrushingTeeth & 0.97 & 1.00 & 0.98 & 31 \\
+CliffDiving & 1.00 & 1.00 & 1.00 & 36 \\
+CricketBowling & 0.97 & 1.00 & 0.99 & 33 \\
+CricketShot & 0.98 & 0.98 & 0.98 & 43 \\
+CuttingInKitchen & 1.00 & 1.00 & 1.00 & 23 \\
+Diving & 1.00 & 0.97 & 0.99 & 40 \\
+Drumming & 1.00 & 1.00 & 1.00 & 51 \\
+FrontCrawl & 1.00 & 0.97 & 0.99 & 36 \\
+GolfSwing & 1.00 & 1.00 & 1.00 & 35 \\
+Haircut & 0.93 & 0.95 & 0.94 & 39 \\
+Hammering & 1.00 & 0.97 & 0.99 & 36 \\
+HammerThrow & 1.00 & 0.96 & 0.98 & 51 \\
+HandstandWalking & 0.95 & 0.95 & 0.95 & 19 \\
+HeadMassage & 0.96 & 1.00 & 0.98 & 27 \\
+HighJump & 0.95 & 0.95 & 0.95 & 41 \\
+HorseRace & 1.00 & 1.00 & 1.00 & 32 \\
+HulaHoop & 0.97 & 0.97 & 0.97 & 35 \\
+IceDancing & 1.00 & 1.00 & 1.00 & 37 \\
+JavelinThrow & 0.88 & 1.00 & 0.94 & 29 \\
+JugglingBalls & 1.00 & 1.00 & 1.00 & 35 \\
+Kayaking & 1.00 & 0.97 & 0.99 & 40 \\
+Knitting & 1.00 & 1.00 & 1.00 & 26 \\
+LongJump & 1.00 & 0.94 & 0.97 & 34 \\
+MilitaryParade & 1.00 & 1.00 & 1.00 & 28 \\
+Mixing & 1.00 & 1.00 & 1.00 & 32 \\
+MoppingFloor & 0.97 & 1.00 & 0.99 & 33 \\
+Nunchucks & 1.00 & 1.00 & 1.00 & 34 \\
+ParallelBars & 0.96 & 0.88 & 0.92 & 25 \\
+PizzaTossing & 1.00 & 1.00 & 1.00 & 23 \\
+PlayingCello & 0.93 & 1.00 & 0.96 & 41 \\
+PlayingGuitar & 1.00 & 1.00 & 1.00 & 45 \\
+PlayingPiano & 1.00 & 0.92 & 0.96 & 26 \\
+PlayingSitar & 1.00 & 0.98 & 0.99 & 42 \\
+PlayingTabla & 1.00 & 1.00 & 1.00 & 25 \\
+PlayingViolin & 1.00 & 1.00 & 1.00 & 17 \\
+PommelHorse & 0.92 & 1.00 & 0.96 & 36 \\
+PullUps & 0.96 & 1.00 & 0.98 & 26 \\
+Punch & 1.00 & 1.00 & 1.00 & 36 \\
+PushUps & 1.00 & 1.00 & 1.00 & 25 \\
+Rafting & 0.95 & 1.00 & 0.98 & 20 \\
+Rowing & 1.00 & 1.00 & 1.00 & 27 \\
+SkateBoarding & 1.00 & 0.97 & 0.99 & 38 \\
+Skiing & 0.97 & 1.00 & 0.98 & 32 \\
+Skijet & 1.00 & 1.00 & 1.00 & 24 \\
+SkyDiving & 1.00 & 1.00 & 1.00 & 28 \\
+SoccerJuggling & 0.95 & 1.00 & 0.97 & 37 \\
+SoccerPenalty & 1.00 & 1.00 & 1.00 & 27 \\
+StillRings & 0.94 & 0.97 & 0.95 & 30 \\
+SumoWrestling & 1.00 & 1.00 & 1.00 & 30 \\
+Swing & 1.00 & 0.94 & 0.97 & 36 \\
+TableTennisShot & 1.00 & 1.00 & 1.00 & 34 \\
+TaiChi & 1.00 & 1.00 & 1.00 & 24 \\
+TennisSwing & 1.00 & 1.00 & 1.00 & 48 \\
+ThrowDiscus & 0.92 & 0.85 & 0.88 & 26 \\
+TrampolineJumping & 0.97 & 0.97 & 0.97 & 33 \\
+Typing & 1.00 & 1.00 & 1.00 & 28 \\
+VolleyballSpiking & 1.00 & 0.97 & 0.98 & 32 \\
+WalkingWithDog & 0.93 & 0.96 & 0.95 & 28 \\
+WallPushups & 1.00 & 1.00 & 1.00 & 35 \\
+WritingOnBoard & 1.00 & 1.00 & 1.00 & 30 \\
+YoYo & 0.96 & 1.00 & 0.98 & 44 \\
+\midrule
+\textbf{Accuracy} &  &  & 0.98 & 2569 \\
+\textbf{Macro avg} & 0.98 & 0.98 & 0.98 & 2569 \\
+\textbf{Weighted avg} & 0.98 & 0.98 & 0.98 & 2569 \\
+\end{longtable}
+Tuy nhiên, hệ thống vẫn tồn tại một số điểm cần cải thiện:
+\begin{itemize}
+    \item Những hành động ít đặc trưng hình thể hoặc hình ảnh người không rõ nét, bị khuất, thiếu sáng sẽ khiến hệ thống dễ nhận diện nhầm.
+    \item Một số class Precision hoặc Recall chưa đạt tuyệt đối như: ThrowDiscus (F1 = 0.88), ParallelBars (F1 = 0.92), PlayingPiano (F1 = 0.96). Điều này phản ánh việc CLIP chỉ encode từng frame độc lập, nên khi chuỗi hành động diễn ra mờ nhạt hoặc bị phân đoạn, LSTM cũng khó gom chính xác.
+    \item Hệ thống chưa tối ưu cho video nhiều người, multi-action trong cùng một video hoặc hành động ngắn/dài bất thường.
+\end{itemize}
+\section{Đề xuất phát triển}
+\begin{itemize}
+        \item Tiếp tục cải tiến hệ thống để hướng đến có thể triển khai trên mạng máy tính thực tế.
+        \item Tiếp tục nghiên cứu cải tiến mô hình sao cho mô hình có khả năng nhận diện hành động tốt hơn và có thể nhận diện được nhiều hành động hơn.
+        \item Nghiên cứu thêm cơ chế trọng tài và secondary Name Node để có thể tăng khả năng chịu lỗi nếu có bất kì sự cố nào xảy ra với Name Node.
+        \item Tăng thêm số lượng Data Node để lưu trữ và nhân bản dữ liệu giảm khả năng mất mát dữ liệu khi hệ thống gặp sự cố.
+        \item Cải thiện thêm hiệu xuất hướng đến việc ứng dụng vào hệ thống camera giám sát trên diện rộng hoặc hệ thống Big Data.
+        \item Nghiên cứu và tích hợp cơ chế bảo mật để có thể mã hóa và bảo vệ dữ liệu của người dùng.
+        \item Nghiên cứu tối ưu hơn nữa chi phí và tăng hiệu quả của hệ thống.
+        \item Nghiên cứu hỗ trợ nhiều hành động đồng thời trong một video.
+        \item Tối ưu mô hình nhận diện cho thiết bị IoT cấu hình thấp.
+\end{itemize}
+\end{document}
