@@ -1,0 +1,38 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+
+    <div id="page-header">
+        <div class="header mb-3">
+            <div>
+                <h4 *ngIf="status===EStatusOderItem.PUSHED">Cập nhật trạng thái chưa in thành đã đẩy</h4>
+                <h4 *ngIf="status===EStatusOderItem.PRINTED">Cập nhật trạng thái đã đẩy sang trạng thái đã in</h4>
+                <h4 *ngIf="status===EStatusOderItem.CUT">Cập nhật trạng thái đã in sang trạng thái đã cắt</h4>
+                <h4 *ngIf="status===EStatusOderItem.ENGRAVED">Cập nhật trạng thái đã cắt thành sang thái đã khắc</h4>
+                <h4 *ngIf="status===EStatusOderItem.IMPROVED">Cập nhật trạng thái đã khắc sang trạng thái đã hoàn thiện</h4>
+                <h4 *ngIf="status===EStatusOderItem.COMPLETED">Cập nhật trạng thái đã hoàn thiện sang trạng thái hoàn thành</h4>
+                <h4 *ngIf="status===EStatusOderItem.SHIPPED">Cập nhật trạng thái hoàn thành sang trạng thái đã ship</h4>
+                <h4 *ngIf="status===EStatusOderItem.CANCEL_SHIP">Cập nhật trạng thái hoàn thành sang trạng thái hủy ship</h4>
+            </div>
+        </div>
+    </div>
+    <form class="form-wrapper border-form" [formGroup]="postForm">        
+        <div class="grid m-0 ml-1">
+            <div class="col-12 grid form-style">
+                <div class="field col-10">
+                    <lib-inputText 
+                        [textarea]="true"
+                        label="Template" 
+                        [rows]="5"
+                        formControlName="templates" 
+                        placeholder="Nhập templates">
+                    </lib-inputText>
+                </div>
+                <div  class="field col-2">
+                    <label class="hide-label-input">Cập nhật trạng thái</label>
+                    <lib-button styleClass="system-style" label="Cập nhật trạng thái" (onClick)="onSubmit()">
+                    </lib-button>
+                </div>             
+            </div>
+        </div>
+    </form>
+</div>

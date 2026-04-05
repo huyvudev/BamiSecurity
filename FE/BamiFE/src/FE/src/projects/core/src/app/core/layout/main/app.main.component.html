@@ -1,0 +1,30 @@
+<div class="layout-wrapper" (click)="onLayoutClick()"
+     [ngClass]="{'layout-horizontal': app.horizontalMenu,
+                'layout-wrapper-static': staticMenuActive,
+                'layout-rightpanel-active': rightPanelActive,
+                'layout-topbar-mobile-active': topbarMobileMenuActive,
+                'layout-megamenu-mobile-active': megaMenuMobileActive,
+                'layout-sidebar-mobile-active': menuMobileActive,
+                'p-input-filled': app.inputStyle === 'filled',
+                'p-ripple-disabled': !app.ripple}" [class]="app.menuColor">
+
+    <p-toast></p-toast>
+
+    <ng-container *ngIf="isShowMenu">
+        <app-menu></app-menu>
+    </ng-container>
+
+    <div class="layout-main">
+        <app-topbar></app-topbar>
+		<!--  -->
+        <lib-breadcrumb></lib-breadcrumb>
+
+        <div class="layout-content" id="layout-content">
+            <router-outlet></router-outlet>
+        </div>
+
+        <div class="layout-main-mask"></div>
+
+        <div class="layout-config-mask" *ngIf="configActive" [@mask-anim]="'visible'"></div>
+    </div>
+</div>

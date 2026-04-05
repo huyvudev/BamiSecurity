@@ -1,0 +1,74 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+
+    <div id="page-header">
+        <lib-table-filter [items]="itemFilters" (_onChange)="getDetail($event.id)" />
+    </div>
+    <form class="form-wrapper border-form" *ngIf="hasData" [formGroup]="postForm" (ngSubmit)="onSubmit()">
+        <div class="grid m-0 ml-1">
+
+            <div class="col-12 grid form-style">
+
+                <div class="field col-3">
+                    <lib-inputText label="Người tạo" formControlName="creatorName" >
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Mã Sku" formControlName="sku" >
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-select label="Độ ưu tiên" formControlName="priority"
+                        [options]="priorityList" optionLabel="name" optionValue="code">
+                    </lib-select>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Tên đối tác" formControlName="partnerName" >
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-calendar label="Ngày tạo" formControlName="createdDate" >
+                    </lib-calendar>
+                </div>
+
+                <div class="field col-3">
+                    <lib-calendar label="Ngày in" formControlName="printDate" >
+                    </lib-calendar>
+                </div>
+
+                <div class="field col-3">
+                    <lib-calendar label="Ngày cắt" formControlName="cutDate" >
+                    </lib-calendar>
+                </div>
+
+                <div class="field col-3">
+                    <lib-calendar label="Ngày khắc" formControlName="engravedDate" >
+                    </lib-calendar>
+                </div>
+
+                <div class="field col-3">
+                    <lib-calendar label="Ngày hoàn thành" formControlName="finishDate" >
+                    </lib-calendar>
+                </div>
+
+                <div class="col-12 pr-4">
+                    <div class="flex justify-content-between flex-column sm:flex-row">
+                        <div class="b-w-100 flex justify-content-between mb-3">
+                            <div class="flex">
+                                <h5>Các Item</h5>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    <lib-table [rows]="orderItem" emptyDataMessage="Không có dữ liệu" [isLoading]="isLoading" [(page)]="page"
+                        [columns]="columns" [listAction]="listAction"
+                        [columnCacheName]="'BatchDetailComponent'"></lib-table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

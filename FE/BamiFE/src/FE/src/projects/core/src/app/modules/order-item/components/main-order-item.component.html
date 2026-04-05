@@ -1,0 +1,60 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div class="title">
+                <h4>Home</h4>
+            </div>
+            <lib-button label="Xuất đơn" icon="pi pi-sign-out"></lib-button>
+        </div>
+    </div>
+
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+
+    <ng-container>
+        <div class="mt-2" id="filter-table">
+            <span>Loại sản phẩm :</span>
+            <div class="filter-wrapper">
+                <div>
+                    <button (click)="changeSku(-1)" [ngClass]="{'statusActive' : currentSku == -1}"
+                        class="btn-Sku "><span>Tất
+                            cả</span></button>
+                </div>
+                <div *ngFor="let sku of ListSku; let i = index">
+                    <button (click)="changeSku(sku.id)" [ngClass]="{'statusActive' : currentSku == sku.id}"
+                        class="btn-Sku"><span
+                            ngClass="{{sku?.isBigSize ? 'active' : '' }}">{{sku?.code}}</span></button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <div id="page-header">
+        <div class="header">
+            <div class="" id="filter-table">
+                <div class="filter-wrapper">
+                    <div class="flex-column">
+                        <span>Trạng thái item</span>
+                        <div class="filter-wrapper ">
+                            <div>
+                                <button (click)="changeStatusOrderItem(-1)"
+                                    [ngClass]="{'statusActive' : curentStatusOrderItem == -1}"
+                                    class="btn-Sku "><span>Tất
+                                        cả</span></button>
+                            </div>
+                            <div *ngFor="let status of statusItems;let i = index">
+                                <button (click)="changeStatusOrderItem(i )"
+                                    [ngClass]="{'statusActive' : curentStatusOrderItem == i}"
+                                    class="btn-Sku "><span>{{status?.name}}</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <lib-button label="Bulk actions" (onClick)="createBulkAction()" icon="pi pi-code"></lib-button>
+        </div>
+    </div>
+
+    <lib-table [rows]="rows" [listAction]="listAction" [(page)]="page" [columns]="columns" [isLoading]="isLoading"
+        [columnCacheName]="'MainOrderItemComponent'" (_onPageChange)="setPage()" [showTable]="true" />
+
+</div>

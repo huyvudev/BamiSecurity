@@ -1,0 +1,32 @@
+<div class="wrapper-form-dialog">
+    <form [formGroup]="postForm" (ngSubmit)="onSumbit()">
+        <div class="form-dialog grid m-0">
+            <div class="field col-12 mb-2">
+                <lib-inputText 
+                    label="Tên đối tác" 
+                    formControlName="name" />
+            </div>
+
+        </div>
+        <div class="p-dialog-footer custom-dialog-footer">
+            <div class="footer-container">
+                <ng-container>
+                    <lib-button 
+                        label="Hủy" icon="pi pi-times" 
+                        styleClass="system-style btn-cancel"
+                        (onClick)="close()">
+                    </lib-button>
+                    <ng-container>
+                        <lib-button 
+                            type="submit" 
+                            label="Lưu" 
+                            styleClass="system-style btn-submit">
+                    </lib-button>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+
+    </form>
+
+</div>

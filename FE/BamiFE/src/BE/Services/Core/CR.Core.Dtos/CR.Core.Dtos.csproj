@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Library\CR.DtoBase\CR.DtoBase.csproj" />
+    <ProjectReference Include="..\..\Shared\CR.Constants\CR.Constants.csproj" />
+    <ProjectReference Include="..\CR.Core.Infrastructure\CR.Core.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

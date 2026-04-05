@@ -1,0 +1,38 @@
+<div id="page-list">
+	<div id="page-header">
+		<div class="header">
+			<div>
+				<h4> Danh sách chi tiết đơn hàng </h4>
+			</div>
+			<!-- <div class="actions">
+				<lib-button (onClick)="updateOrder()" iconType="create" label="Thêm order" />
+			</div> -->
+		</div>
+	</div>
+	<lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+
+	<div id="filter-table">
+		<ng-container>
+			<div class="filter-wrapper">
+				<div class="flex-column">
+					<span>Trạng thái đơn hàng</span>
+					<div class="filter-wrapper mt-2">
+						<div>
+							<button (click)="changeStatus(-1)" [ngClass]="{'statusActive' : currentStatus == -1}"
+								class="btn-Sku "><span>Tất cả</span></button>
+						</div>
+						<div *ngFor="let status of statusOrderDetail; let i = index">
+
+							<button (click)="changeStatus(i)" [ngClass]="{'statusActive' : currentStatus == i}"
+								class="btn-Sku "><span>{{status?.name}}</span></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+	</div>
+
+	<lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+		[columnCacheName]="'MainPartnerComponent'" (_onPageChange)="setPage()">
+	</lib-table>
+</div>

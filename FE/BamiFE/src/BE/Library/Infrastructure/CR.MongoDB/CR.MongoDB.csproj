@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.27.0" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CR.DtoBase\CR.DtoBase.csproj" />
+    <ProjectReference Include="..\..\CR.EntitiesBase\CR.EntitiesBase.csproj" />
+    <ProjectReference Include="..\..\CR.InfrastructureBase\CR.InfrastructureBase.csproj" />
+    <ProjectReference Include="..\..\CR.Utils\CR.Utils.csproj" />
+    <ProjectReference Include="..\CR.ConstantBase\CR.ConstantBase.csproj" />
+  </ItemGroup>
+
+</Project>

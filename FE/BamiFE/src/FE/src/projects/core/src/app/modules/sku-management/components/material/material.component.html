@@ -1,0 +1,17 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div>
+                <h4> Danh sách chất liệu </h4>
+            </div>
+            <div class="actions">
+                <lib-button (onClick)="createOrUpdateMaterial()" iconType="create" label="Tạo chất liệu" />
+            </div>
+        </div>
+    </div>
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+    <lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+        [columnCacheName]="'MaterialComponent'" (_onPageChange)="setPage()">
+
+    </lib-table>
+</div>

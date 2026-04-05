@@ -1,0 +1,26 @@
+<div class="layout-sidebar" [ngClass]="{'layout-sidebar-active': appMain.sidebarActive}" (click)="appMain.onSidebarClick($event)">
+    <div class="sidebar-logo">
+        <a href="#" class="sidebar-pin collapse" [ngClass]="{'collapse': !appMain.staticMenuActive}" title="Toggle Menu" (click)="appMain.onToggleMenuClick($event)">
+            <img src="shared/assets/layout/images/icon-menu/menu_hidden.svg" class="icon-collapse-menu left" *ngIf="appMain.staticMenuActive"/>
+            <img src="shared/assets/layout/images/icon-menu/menu_active.svg" class="icon-collapse-menu right" *ngIf="!appMain.staticMenuActive"/>
+        </a>
+        <!-- <a routerLink="/" *ngIf="appMain.staticMenuActive">
+            <img alt="logo" src="assets/layout/images/icon-menu/logo_meey_finance.svg"/>
+        </a> -->
+        <div *ngIf="appMain.staticMenuActive" class="wrapper-icon-menu">
+            <img src="shared/assets/layout/images/icon-menu/menu.svg" class="icon-menu"/>
+            <span class="menu-text"> Menu </span>
+        </div>
+    </div>
+    <!--  -->
+    <div class="layout-menu-container" (click)="onMenuClick()">
+        <ul class="layout-menu" [ngClass]="{'custom-position-icon': appMain.staticMenuActive}">
+			<ng-container *ngFor="let item of model; let i = index;">
+				<li
+					app-menuitem *ngIf="item?.isShow || item?.isShow === undefined"
+					[item]="item" [index]="i" [root]="true" [staticMenuActive]="appMain.staticMenuActive">
+				</li>
+			</ng-container>
+        </ul>
+    </div>
+</div>

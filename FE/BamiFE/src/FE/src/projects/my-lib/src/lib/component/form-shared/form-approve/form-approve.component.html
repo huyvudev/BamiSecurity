@@ -1,0 +1,37 @@
+<form [formGroup]="postForm" (ngSubmit)="accept()">
+	<div class="flex flex-wrap gap-3 mb-3">
+		<div class="flex align-items-center">
+			<p-radioButton [value]="true" formControlName="approve"></p-radioButton>
+			<label class="ml-2">Phê duyệt</label>                    
+		</div>
+		<div class="flex align-items-center">
+			<p-radioButton [value]="false" formControlName="approve"></p-radioButton>
+			<label class="ml-2">Từ chối</label> 
+		</div>
+	</div>   
+	<div class="grid p-fluid">
+		<div class="col-12 md:col-12 field">
+			<label> Ghi chú (<span class="required-field"> * </span>) </label>
+			<textarea 
+				placeholder="Nhập ghi chú phê duyệt" maxlength="500" pInputTextarea formControlName="note"
+				[ngClass]="{'ng-invalid ng-dirty': postForm?.get('note')?.invalid && postForm?.get('note')?.touched }"
+				textareaAutoresize>
+			</textarea>     
+			<small *ngIf="postForm?.get('note')?.hasError('errorMessage') && postForm?.get('note')?.invalid && postForm?.get('note')?.touched" id="username-help" class="p-error">
+				{{ postForm?.get('note')?.getError('errorMessage') }}
+			</small>      
+		</div>
+	</div>
+	<div class="p-dialog-footer custom-dialog-footer">
+		<button 
+			type="reset" pButton pRipple label="Hủy" 
+			icon="pi pi-times" class="btn-cancel" 
+			(click)="ref.close()">
+		</button>
+		<button 
+			type="submit" pButton pRipple label="Xác nhận" 
+			 class="system-style">
+		</button>
+	</div>
+	</form>
+	

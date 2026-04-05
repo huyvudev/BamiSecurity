@@ -1,0 +1,17 @@
+<div class="grid form-style">
+    <div *ngIf="dialogData?.icon" class="mt-3 col-12 text-center">
+        <div [style.height.px]="60">
+            <p-image
+                [src]="dialogData.icon"
+                [imageStyle]="styleIcon">
+            </p-image>
+        </div>
+    </div>
+    <div *ngIf="dialogData?.message" class="col-12 text-center p-0">
+        <span class="confirm-text" [innerHTML]="dialogData?.message"></span>
+    </div>
+    <div class="p-dialog-footer custom-dialog-footer">
+        <lib-button styleClass="btn-cancel" label="Huỷ" (onClick)="cancel()"/>
+        <lib-button label="Xác nhận" (onClick)="accept()"/>
+    </div>
+</div>

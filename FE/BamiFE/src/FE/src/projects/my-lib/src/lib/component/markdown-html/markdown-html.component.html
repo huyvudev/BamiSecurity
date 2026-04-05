@@ -1,0 +1,90 @@
+<ng-container>
+    <div class="p-fluid p-formgrid grid p-0 markdown-html" [id]="id">
+        <div class="field col-12">
+            <label htmlFor="content" class="label-markdown-html" *ngIf="title?.length">
+                {{ title }}
+            </label>
+            <p-selectButton
+                [disabled]="disabled"
+                [(ngModel)]="contentType"
+                optionValue="value" class="mb-2 mt-2 select-markdown-html"
+                [options]="htmlMarkdownOptions" optionLabel="name"
+                (onChange)="onChange($event.value)">
+            </p-selectButton>
+        </div>
+        <!--  -->
+        <div class="field {{ contentType == 'MARKDOWN' ? 'col-6' : 'col-12' }} {{ disabled ? 'disabled-click' : '' }} mb-0">
+            <label htmlFor="content"> {{ labelContent }} <span *ngIf="isRequired" class="required-field"> * </span></label>
+            <div *ngIf="contentType === 'MARKDOWN'">
+                <textarea
+                    (blur)="checkValid($event)"
+                    (click)="getCaretPos($event)"
+                    (keyup)="getCaretPos($event); checkValid($event)" 
+					(input)="getCaretPos($event)"
+					[maxlength]="maxLength"
+                    pInputTextarea [rows]="textareaRow"
+                    [(ngModel)]="content"
+                    [placeholder]="placeholder"
+                    [disabled]="disabled"
+                    class="custom-disabled"
+                    [ngClass]="{'field-invalid': inValid && isRequired && !disabled}">
+                    {{ isPlaceholder ? placeholderText : '' }}
+                </textarea>
+            </div>
+            <div *ngIf="contentType === 'HTML'" class="{{ disabled ? 'disabled-click' : '' }}" [id]="editorId" class="wrapper-editor" (clickOutside)="setValidEditor()">
+                <angular-editor 
+					(click)="focusEditor();"
+                    (viewMode)="changeViewMode($event)"
+                    [(ngModel)]="content"
+                    (ngModelChange)="changeContentHtml($event)"
+                    [placeholder]="!content?.length ? 'Nhập nội dung' : ''"
+                    [config]="{
+                        height: (heightHtml || (heightMarkdown-74))+'px', editable: editable, sanitize: false, 
+                        toolbarPosition: 'top', toolbarHiddenButtons: [['insertVideo', 'insertImage'], ['fontName']],
+                    }">
+						<ng-template #customButtons>
+						  <ae-toolbar-set class="{{ isInsertImageHtml ? '' : 'disabled-click' }}">
+							<ae-button 
+								iconClass="fa fa-image" title="Insert Image"
+								(buttonClick)="insertImage(true)"
+							>
+							</ae-button>
+						  </ae-toolbar-set>
+						</ng-template>
+                </angular-editor>
+            </div>
+        </div>
+        <div *ngIf="contentType=='MARKDOWN'" class="field col-6 md:col-6">
+            <label htmlFor=" content"> {{ labelContentView }} </label>
+            <markdown
+                class="content-view" [data]="content" [style.height.px]="height || heightMarkdown">
+            </markdown>
+        </div>
+        <div class="col-6 md:col-6 {{ disabled ? 'disabled-click' : '' }}">
+            <div style="width: 130px;" *ngIf="contentType == 'MARKDOWN'">
+                <p-button
+                    [disabled]="disabled" styleClass="system-style btn-secondary" [ngClass]="{'disable-click': disabled}"
+                    (onClick)="insertImage()" class="p-button-outlined p-button-info" label="Chèn ảnh"
+                    icon="pi pi-image" iconPos="left">
+                </p-button>
+            </div>
+        </div>
+        <div class="col-6 md:col-6">
+            <ng-container [ngTemplateOutlet]="buttonPreview"></ng-container>
+        </div>
+        <!--  -->
+        <ng-template #buttonPreview>
+            <div class="text-right" *ngIf="content">
+                <p-button
+                    styleClass="system-style"
+                    class="p-button-outlined p-button-info button-preview-content"
+                    label="Hiển thị toàn bộ nội dung"
+                    icon="pi pi-window-maximize" iconPos="left"
+                    [style.width]="'auto'"
+                    (onClick)="previewContent()"
+                    >
+                </p-button>
+            </div>
+        </ng-template>
+    </div>
+</ng-container>

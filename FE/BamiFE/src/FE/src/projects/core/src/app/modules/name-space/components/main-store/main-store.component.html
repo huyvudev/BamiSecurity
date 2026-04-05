@@ -1,0 +1,19 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<form class="form-wrapper" [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <div class="grid m-0">
+        <div class="col-12 grid form-style">
+            <div class="col-12 grid form-style">
+                <div class="field col-12">
+                    <lib-inputText label="Name" placeholder="Nhập tên store" formControlName="name">
+                    </lib-inputText>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="p-dialog-footer custom-dialog-footer">
+        <lib-button label="Hủy" 
+            iconType="cancel" (onClick)="onClose()"></lib-button>
+        <lib-button type="submit" label="Save" iconType="save"></lib-button>
+    </div>
+</form>

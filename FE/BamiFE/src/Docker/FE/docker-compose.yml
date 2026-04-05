@@ -1,0 +1,25 @@
+services:
+  cr-core:
+    image: cr-core
+    container_name: cr-core
+    build:
+      context: ../../FE/src
+      dockerfile: Dockerfile
+      args:
+        - PROJECT=core
+        - CONFIGURATION=devtest
+        - FOLDER=tenant
+    ports:
+      - 4201:80
+  cr-learner:
+    image: cr-learner
+    container_name: cr-learner
+    build:
+      context: ../../FE/src
+      dockerfile: Dockerfile
+      args:
+        - PROJECT=learner
+        - CONFIGURATION=devtest
+        - FOLDER=learner
+    ports:
+      - 4202:80

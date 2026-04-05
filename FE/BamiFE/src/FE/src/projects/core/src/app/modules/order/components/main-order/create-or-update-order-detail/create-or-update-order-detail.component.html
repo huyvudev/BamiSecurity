@@ -1,0 +1,141 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<form class="form-wrapper" [formGroup]="postForm" (ngSubmit)="onSubmit()">
+
+    <div class="grid m-0">
+        <div class="col-12 grid form-style">
+            <div class="col-12 grid form-style">
+                <div class="field col-12 pb-0">
+                    <h5 class="mb-0"> Thông tin cơ bản</h5>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Type" placeholder="Nhập type chi tiết đơn hàng" formControlName="type">
+                    </lib-inputText>
+
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Title" placeholder="T-shirt" formControlName="title">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Seller Sku" placeholder="Seller Sku" formControlName="sellerSku">
+                    </lib-inputText>
+
+                </div>
+                <div class="field col-3">
+                    <lib-inputText label="Color" placeholder="Red" formControlName="color">
+                    </lib-inputText>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Quantity" placeholder="Số lượng" formControlName="quantity">
+                    </lib-inputNumber>
+                </div>
+
+                <!--  -->
+                <div class="field col-12 pb-0">
+                    <h5 class="mb-0"> Thiết kế</h5>
+                </div>
+
+                <div class="field col-4">
+                    <lib-inputText label="Size" placeholder="10in" formControlName="size">
+                    </lib-inputText>
+                </div>
+                <div class="field col-12 pb-0">
+
+                </div>
+
+                <div class="field col-6">
+                    <label htmlFor="mainImg"> MockUp Front <span class="required-field"> * </span></label>
+                    <div class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                        <lib-image class="image-zone-upload" [isShowImage]="true"
+                            [src]="getMainImage('mockUpFront')" [imageDefault]="imageDefault">
+                        </lib-image>
+                    </div>
+
+                    <p-fileUpload mode="basic" chooseLabel="Chọn ảnh" chooseIcon="pi pi-upload" name="input"
+                        [auto]="true" url="{{uploadApi}}" accept="image/*" [maxFileSize]="maxSize"
+                        (onUpload)="selectImg($event,'mockUpFront')" />
+                </div>
+
+                <div class="field col-6">
+                    <label> MockUp Back </label>
+                    <div class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                        <lib-image class="image-zone-upload" [isShowImage]="true"
+                            [src]="getMainImage('mockUpBack')" [imageDefault]="imageDefault">
+                        </lib-image>
+                    </div>
+
+                    <p-fileUpload mode="basic" chooseLabel="Chọn ảnh" chooseIcon="pi pi-upload" name="input"
+                        [auto]="true" url="{{uploadApi}}" accept="image/*" [maxFileSize]="maxSize"
+                        (onUpload)="selectImg($event,'mockUpBack')" />
+                </div>
+                <!--  -->
+                <ng-container>
+                    <div class="field col-6">
+                        <label>Design Front</label>
+                        <div
+                            class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true"
+                                [src]="getMainImage('saleDesignFront')" [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+
+                        <p-fileUpload mode="basic" chooseLabel="Chọn ảnh" chooseIcon="pi pi-upload" name="input"
+                            [auto]="true" url="{{uploadApi}}" accept="image/*" [maxFileSize]="maxSize"
+                            (onUpload)="selectImg($event,'saleDesignFront')" />
+                    </div>
+
+                    <div class="field col-6">
+                        <label>Design Back</label>
+                        <div
+                            class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true"
+                                [src]="getMainImage('saleDesignBack')" [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+
+                        <p-fileUpload mode="basic" chooseLabel="Chọn ảnh" chooseIcon="pi pi-upload" name="input"
+                            [auto]="true" url="{{uploadApi}}" accept="image/*" [maxFileSize]="maxSize"
+                            (onUpload)="selectImg($event,'saleDesignBack')" />
+                    </div>
+
+                    <div class="field col-6">
+                        <label>Design Sleeves</label>
+                        <div
+                            class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true"
+                                [src]="getMainImage('saleDesignSleeves')" [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+
+                        <p-fileUpload mode="basic" chooseLabel="Chọn ảnh" chooseIcon="pi pi-upload" name="input"
+                            [auto]="true" url="{{uploadApi}}" accept="image/*" [maxFileSize]="maxSize"
+                            (onUpload)="selectImg($event,'saleDesignSleeves')" />
+                    </div>
+
+                    <div class="field col-6">
+                        <label>Design Hood</label>
+                        <div
+                            class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true"
+                                [src]="getMainImage('saleDesignHood')" [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+
+                        <p-fileUpload mode="basic" chooseLabel="Chọn ảnh" chooseIcon="pi pi-upload" name="input"
+                            [auto]="true" url="{{uploadApi}}" accept="image/*" [maxFileSize]="maxSize"
+                            (onUpload)="selectImg($event,'saleDesignHood')" />
+                    </div>
+                </ng-container>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="p-dialog-footer custom-dialog-footer">
+        <lib-button label="Hủy" iconType="cancel" (onClick)="onClose()"></lib-button>
+        <lib-button type="submit" label="Save" iconType="save"></lib-button>
+    </div>
+</form>

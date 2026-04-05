@@ -1,0 +1,20 @@
+<div class="input-dropdown-search">
+    <span class="p-float-label">
+        <!-- <label class="label"> Tìm kiếm </label> -->
+        <p-dropdown
+            [showClear]="false"
+            id="dropdownStatus" [style]="{'width':'12rem'}" [optionLabel]="optionLabel"
+            [optionValue]="optionValue" appendTo="body"
+            [options]="filterArray" 
+            [(ngModel)]="dataFilter.keywordType" (onChange)="dataFilter.keyword && onChange()"
+        >
+        </p-dropdown>
+    </span>
+    <input-search
+        [placeholder]="'Nhập thông tin'"
+        (_onChange)="onChange()"
+        [(keyword)]="dataFilter.keyword"
+        [isShowLabel]="false"
+    >
+    </input-search>
+</div>

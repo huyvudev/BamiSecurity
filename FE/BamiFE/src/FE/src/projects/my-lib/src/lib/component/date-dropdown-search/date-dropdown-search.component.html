@@ -1,0 +1,20 @@
+<div class="date-dropdown-search">
+    <span class="p-float-label">
+        <!-- <label class="label"> Tìm kiếm </label> -->
+        <p-dropdown
+            [showClear]="false"
+            id="dropdownStatus" [style]="{'width':'12rem'}" [optionLabel]="optionLabel"
+            [optionValue]="optionValue" appendTo="body"
+            [options]="filterArray" 
+            [(ngModel)]="dataFilter.typeDate" (onChange)="dataFilter.date && onChange()"
+        >
+        </p-dropdown>
+    </span>
+    <lib-calendar
+        [showClear]="true"
+        [placeholder]="'Chọn ngày'"
+        (onChange)="onChange()"
+        [(ngModel)]="dataFilter.date"
+    >
+    </lib-calendar>
+</div>

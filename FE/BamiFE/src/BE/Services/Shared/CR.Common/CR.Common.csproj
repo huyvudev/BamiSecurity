@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Localization\SourceFiles\*.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Library\CR.ApplicationBase\CR.ApplicationBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\CR.InfrastructureBase\CR.InfrastructureBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\CR.Utils\CR.Utils.csproj" />
+		<ProjectReference Include="..\CR.Constants\CR.Constants.csproj" />
+	</ItemGroup>
+
+</Project>

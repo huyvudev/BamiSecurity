@@ -1,0 +1,56 @@
+<div class="wrapper-form-dialog">
+    <form [formGroup]="postForm" (ngSubmit)="onSumbit()">
+        <div class="form-dialog grid m-0">
+            <div class="field col-12 mb-2">
+                <lib-select label="Tạo Lô" [options]="typeBatch" formControlName="batchType" optionLabel="name"
+                    optionValue="code" />
+            </div>
+
+            <div *ngIf="batchType == 0" class="field col-12 mb-2">
+                <lib-inputText label="Nhập số lượng items của lô" formControlName="numberBatch"></lib-inputText>
+            </div>
+
+            <div *ngIf="batchType == 1" class="field col-12 mb-2">
+                <lib-inputText [textarea]="true" [rows]=4
+                    label="Nhập tên lô theo từng dòng hoặc cách nhau bằng dấu phẩy"
+                    formControlName="batchs"></lib-inputText>
+                <lib-button (onClick)="getItemInBatch()" [disabled]="!postForm.get('batchs')?.value" label="Lấy danh sách items"></lib-button>
+            </div>
+
+            <div *ngIf="batchType == 1" class="field col-12 mb-2">
+                <lib-inputText [textarea]="true" [rows]=4
+                    label="Nhập templates theo từng dòng hoặc cách nhau bằng dấu phẩy"
+                    formControlName="items"></lib-inputText>
+            </div>
+
+            <div class="field col-12 mb-2">
+                <lib-inputText label="Người tạo" formControlName="creatorName"></lib-inputText>
+            </div>
+
+            <div class="field col-12 mb-2">
+                <lib-select label="Đối tác in/ép" 
+                    [options]="listPartner" optionValue="id" 
+                    optionLabel="name"
+                    formControlName="partnerId"></lib-select>
+            </div>
+
+            <div class="field col-12 mb-2">
+                <lib-select label="Độ ưu tiên" [options]="listPriority" optionValue="code" optionLabel="name"
+                    formControlName="priority"></lib-select>
+            </div>
+        </div>
+
+        <div class="p-dialog-footer custom-dialog-footer">
+            <div class="footer-container">
+                <ng-container>
+                    <lib-button label="Hủy" icon="pi pi-times" styleClass="system-style btn-cancel" (onClick)="close()">
+                    </lib-button>
+                    <ng-container>
+                        <lib-button type="submit" label="Lưu" styleClass="system-style btn-submit">
+                        </lib-button>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </form>
+</div>

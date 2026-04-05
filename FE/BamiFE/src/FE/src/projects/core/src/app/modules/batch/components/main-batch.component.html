@@ -1,0 +1,43 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div>
+                <h4> Danh sách Lô </h4>
+            </div>
+
+            <div class="actions mb-3">
+
+                <lib-button (onClick)="QCError()" label="Lỗi QC hoàn thành" />
+
+                <lib-button (onClick)="QCError()" label="Item bù chi tiết" />
+
+                <lib-button (onClick)="QCError()" label="Lô lẻ" />
+
+                <lib-button (onClick)="QCError()" [disabled]="true" label="Xem chi tiết" />
+
+                <lib-button (onClick)="QCError()" label="Items lỗi " />
+
+                <lib-button (onClick)="QCError()" label="Export item" />
+
+                <lib-button (onClick)="QCError()" label="Export lô" />
+
+                <lib-button (onClick)="QCError()" label="Export số lượng item" />
+
+            </div>
+        </div>
+
+    </div>
+
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+
+    <lib-table 
+        [rows]="rows" 
+        [isLoading]="isLoading" 
+        [(page)]="page" 
+        [columns]="columns" 
+        [listAction]="listAction"
+        [columnCacheName]="'MainLabelsComponent'" 
+        (_onPageChange)="setPage()">
+    </lib-table>
+
+</div>

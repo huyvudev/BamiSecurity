@@ -1,0 +1,17 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div>
+                <h4> Danh sách Sku </h4>
+            </div>
+            <div class="actions">
+                <lib-button (onClick)="createSku()" iconType="create" label="Tạo Sku" />
+            </div>
+        </div>
+    </div>
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+    <lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+        [columnCacheName]="'ProductMethodComponent'" (_onPageChange)="setPage()">
+
+    </lib-table>
+</div>

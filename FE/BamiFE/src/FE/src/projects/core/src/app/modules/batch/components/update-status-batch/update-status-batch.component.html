@@ -1,0 +1,104 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+
+    <div id="page-header">
+        <div class="header mb-3">
+            <div>
+                <h4>Quét QR Code</h4>
+            </div>
+        </div>
+
+
+    </div>
+    <form class="form-wrapper border-form mb-2" [formGroup]="postForm">
+        <div class="grid m-0 ml-1">
+            <div class="col-12 grid form-style">
+                <div class="field col-10">
+                    <lib-inputText [textarea]="true" label="Id Lô" [rows]="5" formControlName="idBatch"
+                        placeholder="Nhập tên lô">
+                    </lib-inputText>
+                </div>
+                <div class="field col-2">
+                    <label class="hide-label-input">Tạo QR</label>
+                    <lib-button styleClass="system-style" label="Tạo QR" (onClick)="onSubmit()">
+                    </lib-button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <lib-button *ngIf="listItem.length > 0" class="mt-2 mb-2" label="Tải QR" (onClick)="downloadCanvas()">
+    </lib-button>
+
+    <div class="mt-2 canvasQr">
+        <div class="col-8 grid form-style" #canvasContainer>
+            <ng-container *ngIf="listItem.length > 0">
+                <div *ngFor="let item of listItem ;let i = index" class="col-6 wrapper-item">
+                    <div class="flex-row ">
+                        <span class="ml-4 font-bold text-2xl c">{{padId(item?.orderId, item.itemIndex)}}</span>
+                        <span class="ml-4 font-bold text-2xl">{{i+1}}/{{listItem.length}}</span>
+                    </div>
+                    <div class="flex-row mt-4">
+                        <span class="ml-4">{{item?.code}}</span>
+                    </div>
+                    <div class="flex-row mt-2">
+                        <span class="ml-4">{{item?.size}}</span>
+                    </div>
+                    <div class="flex flex-row">
+                        <qrcode [qrdata]="padId(item?.orderId, item.itemIndex)" [allowEmptyString]="true"
+                            [ariaLabel]="'QR Code image with the following content...'" [colorDark]="'#000000'"
+                            [cssClass]="'center'" [colorLight]="'#ffffff'" [elementType]="'canvas'"
+                            [errorCorrectionLevel]="'M'" [scale]="1" [title]="'A custom title attribute'" [width]="150">
+                        </qrcode>
+                        <div class="w-3 flex flex-column justify-content-center align-content-center">
+                            <div class="w-4 p-1 wrapper-idItem">
+                                {{item?.id}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 wrapper-item">
+                    <div class="flex flex-row justify-content-between ">
+                        <div class="flex flex-column justify-content-center align-content-center ">
+                            <span class="ml-4 font-bold text-2xl ">B-{{(batch.id)}}</span>
+                            <div class="flex mt-5 flex-row  align-content-center">
+                                <span class="ml-4 text-1xl c">{{prioriy}}</span>
+                                <div class="ml-4  wrapper-batch p-1 w-6"> 1/1</div>
+                            </div>
+                            <div class="flex mt-3 ml-4 flex-row  align-content-center">
+                                <span class="font-bold text-1xl ">Người tạo :</span>
+                                <span class="ml-1">{{(batch?.creatorName)}}</span>
+                            </div>
+                            <div class="flex mt-3 ml-4 flex-row  align-content-center">
+                                <span class="font-bold text-1xl ">Số lượng :</span>
+                                <span class="ml-1">{{(listItem?.length)}}</span>
+                            </div>
+                            <div class="flex mt-3 ml-4 flex-row  align-content-center">
+                                <span class="font-bold text-1xl ">Ngày tạo :</span>
+                                <span class="ml-1">{{createDate}}</span>
+                            </div>
+                            <div class="flex mt-3 ml-4 flex-row  align-content-center">
+                                <span class="font-bold text-1xl ">Ngày trả :</span>
+                                <span class="ml-1">{{finishDate}}</span>
+                            </div>
+                            <div class="flex mt-3 ml-4 flex-row  align-content-center">
+                                <span class="font-bold text-1xl ">SKU :</span>
+                                <span class="ml-1">{{(batch?.orderItems[0].code)}}</span>
+                            </div>
+                        </div>
+                        <qrcode [qrdata]="padBatch(batch.id)" [allowEmptyString]="true"
+                            [ariaLabel]="'QR Code image with the following content...'" [colorDark]="'#000000'"
+                            [cssClass]="'center'" [colorLight]="'#ffffff'" [elementType]="'canvas'"
+                            [errorCorrectionLevel]="'M'" [scale]="1" [title]="'A custom title attribute'" [width]="150">
+                        </qrcode>
+
+                    </div>
+                </div>
+            </ng-container>
+
+
+        </div>
+    </div>
+
+</div>

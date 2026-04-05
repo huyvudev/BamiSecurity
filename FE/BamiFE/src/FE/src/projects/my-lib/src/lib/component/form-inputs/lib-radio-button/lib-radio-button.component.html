@@ -1,0 +1,24 @@
+<div class="flex radio-list {{ displayType === 'vertical' ? 'flex-column' : '' }}">
+	<ng-container *ngFor="let item of values; let index = index">
+		<div class="radio-item flex">
+			<p-radioButton
+				#radioButton 
+				[name]="name"
+				[value]="radioValue | function :item" 
+				[(ngModel)]="value"
+				[disabled]="isDisabled || disabled"
+				[style]="style" 
+				[styleClass]="styleClass" 
+				[labelStyleClass]="labelStyleClass" 
+				[inputId]="inputId + (values.length > 1 && index)"
+				(onClick)="onClick.emit($event); _onClick($event)" 
+				(onFocus)="onFocus.emit($event); _onFocus($event)" 
+				(onBlur)="onBlur.emit($event); _onBlur($event)" 
+			/>
+			<label [htmlFor]="inputId + (values.length > 1 && index)"> 
+				{{ item.label }}
+			</label>
+		</div>
+	</ng-container>
+</div>
+

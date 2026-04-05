@@ -1,0 +1,28 @@
+<div id="contentView">
+  <div [style.width.px]="400">
+      <!-- MARKDOWN CONTENT -->
+      <ng-container *ngIf="dialogData?.type === ContentTypeEView.MARKDOWN">
+          <div class="content-mark-down">
+              <markdown disabled="true" class="border-box" [data]="dialogData.content"></markdown>
+          </div>
+      </ng-container>
+
+      <!-- HTML CONTENT -->
+      <ng-container *ngIf="dialogData?.type === ContentTypeEView.HTML">
+          <div [innerHTML]="genHtml | function"></div>
+      </ng-container>
+  </div>
+  <!-- IMAGE -->
+  <ng-container *ngIf="dialogData?.type === ContentTypeEView.IMAGE">
+      <p-image
+          [width]="0"
+          [src]="src"
+          (onHide)="hideDialog()"
+          [preview]="true"
+          styleClass="lib-preview-image"
+          #pImage
+      >
+      </p-image>
+  </ng-container>
+
+</div>

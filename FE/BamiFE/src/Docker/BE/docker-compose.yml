@@ -1,0 +1,97 @@
+services:
+  mssql:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "123@qwe123"
+    ports:
+      - 6000:1433
+    volumes:
+      - ./data:/var/opt/mssql/data
+
+  cr.core.api:
+    image: cr.core.api
+    container_name: cr.core
+    build:
+      context: ../../BE
+      dockerfile: Services/Core/CR.Core.API/Dockerfile
+    ports:
+      - 5001:8080
+    configs:
+      - source: appsettings
+        target: /app/appsettings.json
+    secrets:
+      - source: public_key
+        target: /app/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+      - source: private_key
+        target: /app/private_key.${ASPNETCORE_ENVIRONMENT}.pem
+    volumes:
+      - ${PWD}/secrets/DataProtection-Keys:/app/DataProtection-Keys
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio-manager
+    restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - ./data:/data
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=123qwe@123
+    command: server --console-address ":9001" /data
+
+  seq:
+    image: datalust/seq:latest
+    container_name: cr.seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: 'rabbitmq'
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
+  #   volumes:
+  #     - ./rabbitmq/data/:/var/lib/rabbitmq/
+  #     - ./rabbitmq/log/:/var/log/rabbitmq/
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: "user"
+  #     RABBITMQ_DEFAULT_PASS: "123@123abc"
+
+  # mongodb:
+  #   image: mongo:latest
+  #   container_name: mongodb
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - ./mongodb:/data/db
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: 123qwe
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - ./redis-data:/data
+
+configs:
+  appsettings:
+    file: ./configs/appsettings.json
+    name: appsettings
+secrets:
+  public_key:
+    file: ./secrets/public_key.${ASPNETCORE_ENVIRONMENT}.pem
+  private_key:
+    file: ./secrets/private_key.${ASPNETCORE_ENVIRONMENT}.pem

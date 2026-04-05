@@ -1,0 +1,49 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
+        "forceConsistentCasingInFileNames": true,
+        "strict": false,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+		"skipLibCheck": false,
+        "sourceMap": true,
+        "paths": {
+            "@shared/*": ["./projects/shared/*"],
+            "@mylib-shared/*": ["./projects/my-lib/src/lib/shared/*"],
+            "my-lib": [
+                "dist/my-lib/my-lib",
+                "dist/my-lib",
+            ],
+            "crypto": [
+                "./node_modules/crypto-browserify"
+            ],
+            "stream": [
+                "./node_modules/stream-browserify"
+            ],
+        },
+        "declaration": false,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "importHelpers": true,
+        "target": "ES2022",
+        "module": "ES2022",
+        "lib": [
+            "ES2022",
+            "dom"
+        ],
+    },
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": false,
+        "strictInputAccessModifiers": false,
+        "strictTemplates": false,
+    }
+}

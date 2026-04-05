@@ -1,0 +1,27 @@
+<div id="page-list"> 
+	<div id="page-header">
+		<div class="header">
+			<div>
+				<h4> Danh sách tài khoản </h4>
+			</div>
+			<div class="actions">
+				<lib-button 
+					*ngIf="isGranted(ButtonAddAccount)"
+					(onClick)="createOrUpdate()" 
+					iconType="create" 
+				/>
+			</div>
+		</div>
+	</div>
+	<lib-table  
+		[rows]="rows" 
+		[isLoading]="isLoading" 
+		[(page)]="page"
+		[columns]="columns"
+		[listAction]="listAction" 
+		[columnCacheName]="'AccountManagementComponent'" 
+		(_onPageChange)="setPage()"
+	>
+		<lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+	</lib-table>
+</div>

@@ -1,0 +1,17 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div>
+                <h4> Danh sách SkuBase </h4>
+            </div>
+            <div class="actions">
+                <lib-button (onClick)="createOrUpdateSkuBase()" iconType="create" label="Tạo SkuBase" />
+            </div>
+        </div>
+    </div>
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+    <lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+        [columnCacheName]="'MainSkuBaseComponent'" (_onPageChange)="setPage()">
+
+    </lib-table>
+</div>

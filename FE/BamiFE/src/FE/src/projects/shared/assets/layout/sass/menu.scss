@@ -1,0 +1,139 @@
+@import './variables_general.scss';
+
+.layout-menu-light {
+    .sidebar-logo {
+        img {
+            width: 140px !important;
+            height: auto !important;
+        }
+        //
+        .sidebar-pin {
+            display: block;
+            img.icon-collapse-menu {
+                width: 35px !important;
+            }
+        }
+    }
+
+    .layout-sidebar {
+        .sidebar-logo {
+            margin-right: 8px;
+            .sidebar-logo {
+                margin-right: 0;
+                height: 60px;
+            }
+            .sidebar-pin {
+                background-color: $white;
+            }
+        }
+        //
+        .layout-menu-container {
+            .layout-menu {
+                margin: 0;
+                &.custom-position-icon {
+                    li {
+                        padding: 4px 0px 4px 10px;
+                        & > a {
+                            i {
+                                &.layout-menuitem-icon {
+                                    left: 5px;
+                                }
+                                &.layout-submenu-toggler {
+                                    right: 10px;
+                                }
+                            }
+                            span.menuitem-text {
+                                margin-left: 20px !important;
+                            }
+                        }
+                        &.active-menuitem {
+                            a {
+                                background-color: $white !important;
+                                i {
+                                    &.layout-menuitem-icon {
+                                        color: $systemColor !important;
+                                        // font-weight: bold;
+                                    }
+                                    //
+                                    &.layout-submenu-toggler {
+                                        transform: rotate(90deg);
+                                        margin-top: -0.75rem;
+                                    }
+                                    //
+                                    &.pi-angle-right {
+                                        color: #4c566a;
+                                    }
+                                }
+                                //
+                                span.menuitem-text  {
+                                    color: $systemColor !important;
+                                    font-weight: bold;
+                                }
+                            }
+                              //
+                            ul {
+                                border-radius: 0px;
+                                background: $white !important;
+                                li {
+                                    &:hover {
+                                        background-color: rgb(108 99 240 / 5%) !important;;
+                                        border-radius: 34px 0 0 34px;
+                                        a {
+                                            span.menuitem-text  {
+                                                color: $systemColor !important;
+                                            }
+                                        }
+                                    }
+                                    a {
+                                        background-color: unset !important;
+                                        span.menuitem-text {
+                                            color: unset !important;
+                                            font-weight: normal;
+                                            margin-left: 0px !important;
+                                        }
+                                    }
+                                    //
+                                    &.active-menuitem {
+                                        background-color: rgb(108 99 240 / 10%) !important;
+                                        border-radius: 34px 0 0 34px;
+                                        a {
+                                            // &.active-menuitem-routerlink {
+                                                background-color: unset !important;
+                                                span.menuitem-text  {
+                                                    font-weight: bold;
+                                                    color: $systemColor !important;
+                                                }
+                                            // }
+                                        }
+
+                                        
+
+                                        &:has(> ul.ng-trigger-children) {
+                                            background-color: white !important;
+                                             > a {
+                                                span.menuitem-text  {
+                                                    font-weight: bold !important;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        ul {
+                            background: white !important;
+                            li {
+                                a {
+                                    span.menuitem-text {
+                                        margin-left: 0px !important;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

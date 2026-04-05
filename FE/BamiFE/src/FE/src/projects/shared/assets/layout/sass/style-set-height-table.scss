@@ -1,0 +1,46 @@
+
+@import '../sass/variables_general.scss';
+
+$heightFilterTable: 40px;
+$heightPaginator: 55px;
+$heightTopBarAndBreadcrumb: 110px;
+$heightTitlePage: 60px;
+$totalPadding: 15px;
+
+// setHeight Table theo các page khác nhau
+@mixin setHeightTable($heightTopBarAndBreadcrumb: 0px, $heightHeaderFooterDialog: 0px, $heightDeviation: 20px) {
+    .lib-table {
+        height: calc(100vh - $heightTopBarAndBreadcrumb - $heightTitlePage - $heightFilterTable - $heightPaginator - $heightDeviation - $heightHeaderFooterDialog - $tablePadding - $totalPadding);
+    }
+
+    &:not(:has(lib-table-filter)) {
+        .lib-table {
+            height: calc(100vh - $heightTopBarAndBreadcrumb - $heightPaginator - $heightDeviation - $heightHeaderFooterDialog - $tablePadding - $totalPadding);
+        }
+    }
+
+    &:not(:has(p-paginator)) {
+        .lib-table {
+            height: calc(100vh - $heightTopBarAndBreadcrumb - $heightFilterTable - $heightDeviation - $heightHeaderFooterDialog - $tablePadding - $totalPadding);
+        }
+    }
+
+    &:not(:has(lib-table-filter)):not(:has(p-paginator)) {
+        .lib-table {
+            height: calc(100vh - $heightTopBarAndBreadcrumb - $heightDeviation - $heightHeaderFooterDialog - $tablePadding - $totalPadding);
+        }
+    }
+}
+
+.layout-content {
+    .lib-table {
+        height: 100%;
+    }
+    //
+    #page-list {
+        border-radius: 4px;
+        height: calc(100vh - $heightTopBarAndBreadcrumb - $heightTitlePage - $heightFilterTable);
+        //
+        @include setHeightTable($heightTopBarAndBreadcrumb);
+    }
+}

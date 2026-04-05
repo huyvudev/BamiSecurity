@@ -1,0 +1,25 @@
+﻿using CR.DtoBase.Validations;
+
+namespace CR.Core.ApplicationServices.AuthenticationModule.Dtos.RoleDto
+{
+    public class CreateRolePermissionDto
+    {
+        private string _name = null!;
+
+        [CustomRequired]
+        public required string Name
+        {
+            get => _name;
+            set => _name = value.Trim();
+        }
+
+        private string? _description;
+        public string? Description
+        {
+            get => _description;
+            set => _description = value?.Trim();
+        }
+        public List<string?> PermissionKeys { get; set; } = new();
+        public List<string?> PermissionKeysRemove { get; set; } = new();
+    }
+}

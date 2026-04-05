@@ -1,0 +1,478 @@
+/* Base styles */
+html {
+    font-size: 10px;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    background-color: #fff;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+p {
+    color: #b3b3b3;
+    font-weight: 300;
+}
+
+a {
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease;
+    color: #888;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none !important;
+}
+
+/* Layout */
+.content {
+    padding: 7rem 0;
+}
+
+.half, .half .container > .row {
+    height: 100vh;
+    min-height: 700px;
+}
+
+@media (max-width: 991.98px) {
+    .half .bg {
+        height: 200px;
+    }
+}
+
+.half .contents, .half .bg {
+    width: 50%;
+}
+
+@media (max-width: 1199.98px) {
+    .half .contents, .half .bg {
+        width: 100%;
+    }
+}
+
+/* Login content left */
+.login-content-left {
+    position: relative;
+    background-color: #fff;
+    min-height: 100vh;
+}
+
+.login-content-left-main {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15%;
+    align-items: center;
+}
+
+.logo img {
+    width: 200px;
+}
+
+.login-title h2 {
+    margin-bottom: 0.5rem;
+}
+
+.login-title-sub {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 18px;
+    color: #76809b;
+}
+
+/* Form styles */
+.login-form .phone_login,
+.login-form .pass_login {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    color: #212633;
+    margin-bottom: 0.5rem;
+}
+
+.login-form #username,
+.login-form #password {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 8px 8px 16px;
+    gap: 8px;
+    width: 420px;
+    height: 40px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.login-handle {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+}
+
+.remember-and-forgetPass {
+    display: flex;
+}
+
+.remember_pass {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.7);
+    margin-left: 0.5rem;
+    margin-right: 9rem;
+}
+
+.forgot-pass {
+    width: 108px;
+    height: 20px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    text-decoration-line: underline;
+}
+
+/* Button styles */
+.buttons .login-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 10px;
+    width: 420px;
+    border-radius: 8px;
+}
+
+.buttons .help-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 7rem 8px 6rem;
+    gap: 8px;
+    width: 420px;
+    height: 40px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.no-copy-right-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4rem;
+}
+
+.no-copy-right {
+    position: absolute;
+    bottom: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    color: #525b73;
+}
+
+/* Login content right */
+.login-content-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to top right, rgb(31, 114, 196), #75a3cf);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Additional styles */
+.half .form-control {
+    border: none;
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    height: 54px;
+    background: #fff;
+}
+
+.half .form-control:active, 
+.half .form-control:focus {
+    outline: none;
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.half .centered-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.half .centered-text {
+    margin-top: -10px;
+    font-size: 25px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.half .bottom-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    backdrop-filter: blur(15.276px);
+    background: radial-gradient(111.89% 213.6% at 24.99% 43.36%, rgba(243,245,249,.4) 0%, rgba(223,226,255,.2189) 74.98%, rgba(107,122,255,.4) 100%);
+}
+
+.half .title-login {
+    color: #232154;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.half .subtitle-login {
+    color: #98A2B3;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    font-style: normal;
+    color: #76809b;
+}
+
+.half .form-group .login-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #212633;
+    margin-bottom: 0.5rem;
+}
+
+.half .form-group input {
+    border-radius: 8px !important;
+    height: 3rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    box-shadow: none !important;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.half .btn {
+    height: 54px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.half .btn-login {
+    background-color: #5346e0;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.half .btn-login:focus {
+    outline: 0;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.half .btn-support {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background-color: #fff;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.half .btn-support:focus {
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.half .forgot-pass {
+    position: relative;
+    top: 2px;
+    font-size: 14px;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    top: 55%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.password-toggle-icon i {
+    font-size: 18px;
+    color: #333;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+.control {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.control .caption {
+    position: relative;
+    top: .1rem;
+    color: #344054;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.forgot-password-text {
+    color: #175CD3;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-top: .3rem;
+    padding: 8px 16px;
+}
+
+.copyright-login {
+    margin-top: 147px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #98A2B3;
+}
+
+/* Checkbox styles */
+.control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+.control__indicator {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #FFF;
+    border: 1px solid #D0D5DD;
+    border-radius: 4px;
+}
+
+.control--radio .control__indicator {
+    border-radius: 50%;
+}
+
+.control:hover input ~ .control__indicator,
+.control input:focus ~ .control__indicator {
+    background: #FFF;
+}
+
+.control input:checked ~ .control__indicator {
+    background: #0747A6;
+}
+
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+.control input:checked:focus ~ .control__indicator {
+    background: #0747A6;
+}
+
+.control input:disabled ~ .control__indicator {
+    background: #e6e6e6;
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.control__indicator:after {
+    content: "\2714";
+    position: absolute;
+    display: none;
+    font-size: 14px;
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease;
+}
+
+.control input:checked ~ .control__indicator:after {
+    display: block;
+    color: #fff;
+}
+
+.control--checkbox .control__indicator:after {
+    top: 50%;
+    left: 50%;
+    margin-top: -1px;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.control--checkbox input:disabled ~ .control__indicator:after {
+    border-color: #7b7b7b;
+}
+
+.control--checkbox input:disabled:checked ~ .control__indicator {
+    background-color: #0747A6;
+    opacity: .2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-content-left-main {
+        margin-top: 10%;
+    }
+
+    .login-form #username,
+    .login-form #password,
+    .buttons .login-button,
+    .buttons .help-button {
+        width: 100%;
+    }
+
+    .remember-and-forgetPass {
+        flex-direction: column;
+    }
+
+    .remember_pass {
+        margin-right: 0;
+    }
+
+    .half .centered-text {
+        font-size: 20px;
+    }
+}

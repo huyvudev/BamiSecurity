@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Migrations\**" />
+      <EmbeddedResource Remove="Migrations\**" />
+      <None Remove="Migrations\**" />
+    </ItemGroup>
+	
+    <ItemGroup>
+	    <Content Include="appsettings.json">
+		    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    </Content>
+    </ItemGroup>
+	
+    <ItemGroup>
+        <PackageReference Include="HtmlSanitizer" Version="8.1.870" />
+        <PackageReference Include="itext7" Version="8.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+		    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+        <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Library\CR.EntitiesBase\CR.EntitiesBase.csproj" />
+        <ProjectReference Include="..\..\Library\CR.Utils\CR.Utils.csproj" />
+        <ProjectReference Include="..\..\Services\Core\CR.Core.Infrastructure\CR.Core.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

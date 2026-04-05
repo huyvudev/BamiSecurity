@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<!--Lỗi validate field-->
+		<text name="error_validation_field_Required">Trường bắt buộc nhập</text>
+		<text name="error_validation_field_MaxLength">Trường không được quá {0} ký tự</text>
+		<text name="error_validation_field_MinLength">Trường phải có ít nhất {0} ký tự</text>
+		<text name="error_validation_EmailInvalid">Địa chỉ Email không hợp lệ</text>
+		<text name="error_validation_PhoneInvalid">Số điện thoại không hợp lệ</text>
+		<text name="error_validation_field_CustomMinLength">Cần ít nhất 1 bản ghi cho thông tin này</text>
+
+		<!--validation model-->
+		<text name="error_validation_IntegerRange">Chỉ chọn 1 trong các giá trị sau: {0}</text>
+		<text name="error_validation_StringRange">Chỉ chọn 1 trong các giá trị sau: {0}</text>
+		<text name="error_validation_ConstStrings">Giá trị đang chọn là: {0}, không nằm trong tập: {1}</text>
+		<text name="error_validation_FileExtension">File chỉ hỗ trợ các định dạng sau: {0}</text>
+		<text name="error_validation_FileMaxLength">Tổng dung lượng file không được vượt quá {0}</text>
+		
+		<!--Định nghĩa các lỗi-->
+		<text name="error_System">Lỗi hệ thống</text>
+		
+		<text name="error_TenantNotFound">Không tìm thấy đối tượng thuê</text>
+		<text name="error_Unauthorized">Unauthorized</text>
+		<text name="error_UsernameOrPasswordIncorrect">Tài khoản hoặc mật khẩu không chính xác. Vui lòng kiểm tra và thử lại</text>
+		<text name="error_UserNotFound">Tài khoản không tồn tại. Vui lòng kiểm tra lại</text>
+		<text name="error_UserIsDeactive">Tài khoản bị khoá</text>
+		<text name="error_InvalidUserTypePermission">Tài khoản không có quyền</text>
+		<text name="error_UserOldPasswordIncorrect">Mật khẩu cũ không đúng</text>
+		<text name="error_UserCustomerNotFound">Số điện thoại không tồn tại. Vui lòng kiểm tra lại</text>
+		<text name="error_UserCustomerIsVerifyOcr">Người dùng đã đăng ký ocr thông tin giấy tờ</text>
+		<text name="error_RoleNotFound">Không tìm thấy vai trò</text>
+		<text name="error_InvalidUserType">Loại tài khoản không hợp lệ</text>
+		<text name="error_UserRegisterExistPersonalPhone">Số điện thoại đã tồn tại trên hệ thống</text>
+		<text name="error_UserRegisterExistPersonalEmail">Email đã tồn tại trên hệ thống</text>
+		<text name="error_UserIsVerifyCannotDelete">Tài khoản đã được xác minh không thể xóa</text>
+		<text name="error_UserStatusIsInvalid">Trạng thái tài khoản không hợp lệ</text>
+		<text name="error_UsernameHasBeenUsed">Tên người dùng đã được sử dụng</text>
+		<text name="error_UserEmailIsExist">Email đã được sử dụng trong tài khoản ứng dụng</text>
+		<text name="error_UserIsVerify">Tài khoản ứng dụng đã được xác thực</text>
+		<text name="error_UserIsRequestVerify">Tài khoản ứng dụng đang có yêu cầu xác thực</text>
+		<text name="error_UserCurrentPasswordIncorrect">Mật khẩu không chính xác</text>
+		<text name="error_AppPasswordIncorrect">Mật khẩu không chính xác, tài khoản sẽ bị khóa nếu sai liên tiếp ({0}) lần. Còn lại ({1})</text>
+		<text name="error_UserIsInactiveBecauseMultiLoginTime">Vì lý do bảo mật, tài khoản tạm thời bị khóa do đăng nhập quá nhiều lần. Vui lòng thử lại sau.</text>
+
+		<!-- Lỗi cấu hình biến hệ thống -->
+		<text name="error_SysVarsIsNotConfig">Biến hệ thống chưa được cấu hình</text>
+		<text name="error_FileNoContent">File bị lỗi hoặc không có nội dung</text>
+		
+		<!--Lỗi load hình ảnh-->
+		<text name="error_ImageLoaderInvalidUrl">URL hình ảnh không hợp lệ: '{0}'</text>
+		<text name="error_ImageLoaderHttpRequestError">Lỗi yêu cầu HTTP khi tải hình ảnh từ url: '{0}'</text>
+		<text name="error_ImageLoaderStreamException">Lỗi tải ảnh từ phản hổi HTTP</text>
+		<text name="error_ImageLoaderInvalidImageSize">Kích thước hình ảnh vượt quá {0}</text>
+
+		<!--Lỗi phân quyền -->
+		<text name="error_UserNotHavePermission">Tài khoản không có quyền truy cập</text>
+
+		<!--Phân quyền-->
+		<text name="permission_CoreMenuDashboard">Tổng quan</text>
+		<text name="permission_CoreMenuUser">Quản lý người dùng</text>
+		<text name="permission_CoreMenuRole">Cài đặt vai trò</text>
+		<text name="permission_CoreButtonAddRole">Thêm vai trò</text>
+		<text name="permission_CoreButtonUpdateRole">Cập nhật vai trò</text>
+		<text name="permission_CoreButtonActiveDeactiveRole">Khóa/Kích hoạt vai trò</text>
+		<text name="permission_CoreButtonDeleteRole">Xóa vai trò</text>
+
+		<text name="permission_CoreMenuAccount">Quản lý tài khoản</text>
+		<text name="permission_CoreButtonAddAccount">Thêm tài khoản</text>
+		<text name="permission_CoreButtonUpdateAccount">Cập nhật tài khoản</text>
+		<text name="permission_CoreButtonSetPasswordAccount">Set mật khẩu</text>
+		<text name="permission_CoreButtonActiveDeactiveAccount">Khóa/Kích hoạt tài khoản</text>
+		<text name="permission_CoreButtonDeleteAccount">Xóa tài khoản</text>
+	  </texts>
+</localizationDictionary>

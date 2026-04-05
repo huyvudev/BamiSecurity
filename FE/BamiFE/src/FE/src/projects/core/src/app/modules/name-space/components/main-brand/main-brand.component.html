@@ -1,0 +1,16 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div>
+                <h4> Danh sách SkuBase </h4>
+            </div>
+            <div class="actions">
+                <lib-button (onClick)="createOrUpdateBrand()" iconType="create" label="Tạo Brand" />
+            </div>
+        </div>
+    </div>
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+    <lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+        [columnCacheName]="'MainBrandComponent'" (_onPageChange)="setPage()">
+    </lib-table>
+</div>

@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+    <link rel="stylesheet" href="/api/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @* <link rel="stylesheet" href="~/css/site.css" /> *@
+    <link rel="stylesheet" href="/api/css/styles.css" />
+    <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    <link rel="icon" type="image/x-icon" href="/api/images/favicon.svg">
+</head>
+<body>
+    <main role="main">
+        @RenderBody()
+    </main>
+    <script src="/api/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/api/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/api/js/site.js" asp-append-version="true"></script>
+    <script src="/api/lib/iconify-icon/iconify-icon.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

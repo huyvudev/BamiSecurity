@@ -1,0 +1,17 @@
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <div class="grid p-fluid">
+        <div class="col-12 md:col-12">
+            <div class="field">
+                <label> Ghi chú </label>
+                <textarea 
+					pInputTextarea formControlName="requestNote"
+					textareaAutoresize placeholder="Nhập nội dung trình duyệt">
+				</textarea>         
+            </div>
+        </div>
+    </div>
+    <div class="p-dialog-footer custom-dialog-footer">
+        <p-button label="Hủy" styleClass="btn-cancel" (onClick)="close()"></p-button>
+        <p-button type="submit" label="Đồng ý" styleClass="system-style"></p-button>
+    </div>
+</form>

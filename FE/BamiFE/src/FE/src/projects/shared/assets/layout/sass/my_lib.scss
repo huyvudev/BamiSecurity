@@ -1,0 +1,432 @@
+@import './variables_general.scss';
+/* Overlay Loading Style */
+
+
+/* Markdown Html Styles */
+.markdown-html {
+    .img-zone {
+        border: 1px dashed #bbb;
+        border-radius: 8px;
+        margin-left: -6px;
+        width: 200px;
+        height: 200px;
+        min-height: 100px;
+        padding: 5px;
+        img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 15px;
+        }
+    }
+
+    .content-view {
+        border: 1px solid $grayMb200;
+        border-radius: 8px;
+        display: block;
+        width: 100%;
+        overflow-y: scroll;
+        background: white;
+        border-radius: 3px;
+        padding-left: 8px;
+        padding-top: 4px;
+    }
+    
+    .content-view img {
+        width: 100%;
+    }
+
+    .button-preview-content {
+        button {
+            width: auto !important;
+        }
+    }
+
+    lib-markdown-html {
+        width: 100%;
+    }
+
+    .angular-editor {
+        .angular-editor-wrapper {
+            background: white;
+        }
+    }
+
+    .select-markdown-html{
+        .p-button{
+            border-radius: 8px;
+        }
+    }
+}
+
+/* Table */
+$color: #0747A6;
+$fontWeightBold: 600;
+
+p-tabview {
+    .wrapper-lib-table {
+        margin-top: 10px !important;
+        padding: 0;
+    }
+}
+
+.wrapper-lib-table {
+	margin-top: 16px;
+    padding: $tablePadding;
+	padding-right: 12px;
+	padding-bottom: 0;
+    border: $borderDefault;
+    border-radius: 16px;
+	background-color: white;
+	//
+    &.reset-border {
+      padding: 0;
+      border: none;
+    }
+
+    // border-bottom: 2px solid #dee2e6;
+    .b-icon-filter-setting {
+        position: absolute;
+        z-index: 1;
+        font-size: 1rem;
+        cursor: pointer;
+        &:hover {
+            color: $color;
+            font-weight: $fontWeightBold;
+        }
+    }
+
+    .icon-setting-display-column {
+        &.pi-cog {
+            font-size: 1.2rem;
+            position: absolute;
+            top: 30%;
+            &:hover {
+                color: $color;
+                font-weight: $fontWeightBold;
+            }
+        }
+    }
+    //
+    .lib-table {
+        // overflow: auto;
+		// padding-right: 5px;
+        .p-datatable-scrollable .p-datatable-wrapper {
+            overflow: unset;
+			// thead {
+			// 	tr {
+			// 		:first-child {
+			// 			border-top-left-radius: 12px;
+			// 		}
+			// 		:last-child {
+			// 			border-top-right-radius: 12px;
+			// 		}
+			// 	}
+			// }
+        }
+		
+    }
+}
+
+.paginator {
+  border-top: 2px solid #8080804d;
+  margin-top: 5px;
+  .p-paginator {
+		// paginator all
+		&.show-option-all {
+			// p-dropdown {
+			// 	.p-paginator-rpp-options {
+			// 		.ng-trigger-overlayContentAnimation{
+			// 			.p-dropdown-panel {
+			// 				font-size: $fontWeightBold;
+			// 				.p-dropdown-items-wrapper {
+			// 					ul {
+			// 						.p-element:last-child {
+			// 							li {
+			// 								span {
+			// 									display: none !important;
+			// 								}
+			// 								&::after {
+			// 									content: "Tất cả" !important;
+			// 								}
+			// 							}
+			// 						}
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
+		}
+  	}
+}
+
+.dialog-setcolumn {
+	.p-dialog-header {
+		.p-dialog-header-icon {
+			box-shadow: none !important;
+		}
+	}
+	.p-dialog-content {
+		padding: 0;
+		.wrapper-setting-column {
+			.title-list {
+				p-checkbox {
+					padding: 0.75rem 1.5rem;
+				}
+			}
+			//
+			.list-column {
+				p-checkbox {
+					padding: 0.75rem 1.5rem;
+					.p-checkbox-disabled {
+						.p-highlight {
+							border-color: #c4c4c4 !important;
+						}
+					}
+				}
+				.p-checkbox-label {
+					line-height: normal !important;
+				}
+			}
+		}
+	}
+}
+
+/* Upload Media Style */
+.wrapper-upload {
+    .e-file-upload {
+        &.fix-height {
+            .p-fileupload-content {
+                height: 40vh;
+            }
+        }
+
+        &.check-show-upload{
+            .p-fileupload-buttonbar{
+                .p-fileupload-choose{
+                    pointer-events: none;
+                    background: #EAECF0;
+                    color: $placeholderColor;
+                    border-color: #EAECF0;
+                }
+            }
+        }
+
+        .p-fileupload-content {
+            overflow-y: scroll;
+            display: flex;
+            flex-wrap: wrap;
+            .gallery {
+                margin: 5px;
+                border: 1px solid #ccc;
+
+                width: calc((100% - 30px)/3);
+                border-radius: 3px;
+                //
+                &:hover {
+                    border: 1px solid #777;
+                }
+
+                .gallery-video {
+                    height: auto;
+                }
+
+                .gallery-image {
+                    height: 150px;
+                    width: 100%;
+                    background-size: cover !important;
+                    background-color: #eee;
+                    cursor: pointer;
+                    .overlay-preview {
+                        display: flex;
+                        opacity: 1;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: #80808094;
+                        width: 100%;
+                        height: 100%;
+                        .pi-eye {
+                            font-size: 1.5rem;
+                            color: white;
+                        }
+                    }
+                }
+
+                .icon-actions {
+                    padding: 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    .icon {
+                        cursor: pointer;
+                        &.remove-img {
+                            cursor: pointer;
+                            color: rgba(235, 76, 96, 1);
+                            &:hover {
+                                color: red;
+                            }
+                        }
+                        &.icon-crop {
+                            width: 16px;
+                            &:hover {
+                                filter: drop-shadow(2px 4px 6px blue);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* View Content Style */
+#contentView {
+    display: flex;
+    justify-content: center;
+    //
+    .lib-preview-image {
+        .p-image-mask.p-component-overlay {
+            .p-image-toolbar {
+                z-index: 1103;
+            }
+            // .ng-trigger {
+            //     zoom: 0.85;
+            // }
+        }
+
+    }
+    .content-mark-down {
+        img {
+            max-width: 100%;
+        }
+    }
+}
+
+/* Popup Confirm  */
+.popup-confirm {
+    border-radius: 12px;
+    .field{
+        &-label{
+            display: block;
+            text-align: center;
+            margin: -1rem auto 0rem;
+            font-size: 20px;
+            font-weight: 400;
+            color: #232154;
+        }
+    }
+    .p-dialog-header {
+        padding: 20px 40px !important;
+        border-bottom: 1px solid #D0D5DD;
+        &-icons {
+            display: none !important;
+        }
+    }
+    .p-dialog-content{
+        padding-top: 44px !important;
+        padding-bottom: 88px !important;
+        .p-dialog-footer{
+            border-top: 1px solid #D0D5DD;
+            .p-button:focus{
+                box-shadow: none;
+            }
+            .p-popup-confirm-reject{
+                .p-button-label{
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: $systemColor;
+                }
+            }
+            .p-popup-confirm-approve{
+                background-color: $systemColor !important;
+                .p-button-label{
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: #FFFFFF;
+                }
+            }
+        }
+    }
+    .reason-popup-confirm{
+            border: $borderDefault;
+            border-radius: 8px;
+    }
+    
+}
+
+// Style Label cua lib markdown-html
+.label-markdown-html {
+    font-size: 20px;
+    font-weight: 700;
+    color: #344054; 
+    margin-bottom: 20px;
+    margin-bottom: 1rem !important;
+}
+
+.popup {
+    position: absolute;
+    background: #fff;
+    // padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 113px;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px;
+    margin-top: 10px;
+}
+
+// ADD BORDER INVALID INPUT (CLICK BUTTON SUBMIT)
+//.ng-invalid-dirty class này thêm vào để báo đỏ cho trường hopwk disable input mà vẫn muốn báo border-invalid
+lib-inputText, lib-inputNumber, lib-select, lib-multiSelect {
+	&.ng-invalid.ng-dirty, &.ng-invalid-dirty {
+		.p-inputtext, 
+        .p-dropdown:not(.p-dropdown-open), 
+        .p-multiselect:not(.p-multiselect-open)
+        {
+			border-color: $errorColor;
+		}
+	}
+}
+
+lib-calendar {
+	&.ng-invalid.ng-dirty, &.ng-invalid-dirty {
+		p-calendar {
+            .p-calendar {
+                &:not(.open-datepicker) {
+                    .p-button-icon-only {
+                        border-color: $errorColor;
+                    }
+                    .p-inputtext {
+                        border-color: $errorColor;
+                    }
+                }
+                //
+            }
+            
+		}
+	}
+    //
+    p-calendar {
+        &.ng-invalid.ng-dirty {
+            .p-calendar {
+                .p-button-icon-only {
+                    border-color: $errorColor !important;
+                }
+            }
+        }
+        // fix khi chọn ngày thì nó hiện placeholder xong mới fill ngày vào
+        .p-calendar {
+            &.open-datepicker {
+                .p-inputtext {
+                    &::placeholder {
+                        color: white !important;
+                    }
+                }
+            }
+        }
+    }
+    //
+
+}
+

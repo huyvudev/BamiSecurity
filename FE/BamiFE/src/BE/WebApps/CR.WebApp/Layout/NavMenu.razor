@@ -1,0 +1,44 @@
+﻿@inject NavigationManager NavigationManager
+@inject ILogger<NavMenu> Logger
+
+<RadzenHeader>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+        <RadzenLabel Text="Header" />
+    </RadzenStack>
+</RadzenHeader>
+<RadzenSidebar @bind-Expanded="@sidebarExpanded">
+    <RadzenStack AlignItems="AlignItems.End" Class="rz-p-2">
+        <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Secondary" Click="@(() => sidebarExpanded = false)" />
+    </RadzenStack>
+    <div class="rz-p-4">
+        Menu
+    </div>
+    <RadzenPanelMenu>
+        <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" >
+        </RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Parent" Icon="account_box" >
+            <RadzenPanelMenuItem Text="Item 1" Path="/counter" class="custom-menu-item" />
+            <RadzenPanelMenuItem Text="Item 2" Path="/weather" class="custom-menu-item" />
+        </RadzenPanelMenuItem>
+    </RadzenPanelMenu>
+    
+</RadzenSidebar>
+
+@code {
+    private bool sidebarExpanded = true;
+
+    // private bool collapseNavMenu = true;
+
+    // private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    // private void ToggleNavMenu()
+    // {
+    //     collapseNavMenu = !collapseNavMenu;
+    // }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Logger.LogInformation($"firstRender = {firstRender}");
+    }
+}

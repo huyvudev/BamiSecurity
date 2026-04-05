@@ -1,0 +1,17 @@
+<div id="page-list">
+    <div id="page-header">
+        <div class="header">
+            <div>
+                <h4> Danh sách phương thức sản xuất </h4>
+            </div>
+            <div class="actions">
+                <lib-button (onClick)="createOrUpdateProductMethod()" iconType="create" label="Thêm phương thức sản xuất" />
+            </div>
+        </div>
+    </div>
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+    <lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+        [columnCacheName]="'ProductMethodComponent'" (_onPageChange)="setPage()">
+
+    </lib-table>
+</div>

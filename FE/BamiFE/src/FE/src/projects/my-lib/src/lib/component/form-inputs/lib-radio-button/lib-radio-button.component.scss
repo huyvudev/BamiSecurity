@@ -1,0 +1,36 @@
+::ng-deep .radio-list {
+	.radio-item {
+		align-items: center;
+		&:not(:last-child) {
+			padding-right: 15px;
+		}
+		//
+		.p-radiobutton {
+			height: 23px;
+			width: 23px;
+			.p-radiobutton-box {
+				height: 23px;
+				width: 23px;
+				&.p-highlight {
+					box-shadow: none !important;
+					.p-radiobutton-icon {
+						width: 11px;
+						height: 11px;
+					}
+				}
+			}
+		}
+		//
+		label {
+			margin-left: 5px;
+			cursor: pointer;
+		}
+	}
+
+	//
+	&.flex-column {
+		.radio-item {
+			margin-bottom: 15px;
+		}
+	}
+}

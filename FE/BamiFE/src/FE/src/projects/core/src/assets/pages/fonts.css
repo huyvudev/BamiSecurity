@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Inter', sans-serif;
+    font-display: block;
+    src: url('../../../../shared/assets/fonts/Inter-Medium.ttf') format('truetype') ;
+    font-weight: normal;
+    font-style: normal;
+}

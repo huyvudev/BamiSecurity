@@ -1,0 +1,29 @@
+<div id="page-list"> 
+	<div id="page-header">
+		<div class="header">
+			<div>
+				<h4> Danh sách vai trò </h4>
+			</div>
+			<div class="actions">
+				<lib-button 
+					*ngIf="isGranted(ButtonAddRole)"
+					(onClick)="createOrUpdate()" 
+					iconType="create" 
+				/>
+			</div>
+		</div>
+	</div>
+	<lib-table  
+		[rows]="rows" 
+		[isLoading]="isLoading" 
+		[(page)]="page"
+		[columns]="columns"
+		[listAction]="listAction" 
+		[columnCacheName]="'RoleManagementComponent'" 
+		(_onPageChange)="setPage()"
+	>
+		<lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+
+	</lib-table>
+
+</div>

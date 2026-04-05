@@ -1,0 +1,148 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+
+    <div id="page-header">
+        <div class="header mb-3">
+            <div>
+                <h4 *ngIf="this.idOrder">Đơn hàng</h4>
+                <h4 *ngIf="!this.idOrder">Thêm đơn hàng</h4>
+            </div>
+
+            <div class="actions">
+                <lib-button iconType="approve" *ngIf="this.order?.status == statusOrder.PENDING_IMPORTED" styleClass="ml-3 system-style p-button"
+                    label="Đẩy đơn hàng" (onClick)="approveOrder()">
+                </lib-button>
+
+                <lib-button styleClass="ml-3 system-style p-button" label="Quay lại" (onClick)="back()"
+                    icon="pi pi-angle-left">
+                </lib-button>
+            </div>
+        </div>
+
+        <lib-table-filter *ngIf="!isCreate" [items]="itemFilters" (_onChange)="getDetail($event.id)" />
+
+    </div>
+    <form class="form-wrapper border-form" *ngIf="hasData" [formGroup]="postForm" (ngSubmit)="onSubmit()">
+
+        <div class="btn-actions mt-3">
+            <div class="flex justify-content-end">
+                <ng-container>
+                    <lib-button *ngIf="idOrder &&! isEdit" icon="pi pi-pencil" styleClass="system-style"
+                        label="Chỉnh sửa" (onClick)="activeEdit()">
+                    </lib-button>
+                    <lib-button *ngIf="!idOrder || isEdit" type="btn-submit" label="Lưu" icon="pi pi-save"
+                        styleClass="system-style p-button ml-3"></lib-button>
+                    <lib-button *ngIf="isEdit && idOrder" styleClass="btn-cancel ml-2" label="Hủy" (onClick)="cancel()">
+                    </lib-button>
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="grid m-0 ml-1">
+
+            <div class="col-12 grid form-style">
+
+                <div class="field col-3">
+                    <lib-inputText label="Tên người nhận" formControlName="name" placeholder="Nhập tên người nhận">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Order number" formControlName="orderNumber" placeholder="Nhập order number">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Địa chỉ" formControlName="address" placeholder="Nhập địa chỉ">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Địa chỉ 2" formControlName="address2" placeholder="Nhập địa chỉ 2">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Thành phố" formControlName="city" placeholder="Nhập thành phố">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Bang" formControlName="state" placeholder="Nhập bang">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Mã bưu chính" formControlName="postalCode" placeholder="Nhập mã bưu chính">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Quốc gia" formControlName="country" placeholder="Nhập quốc gia">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-select [filter]="true" [showClear]="true" label="Brand" formControlName="brandId"
+                        [options]="listBrand" optionLabel="name" optionValue="id">
+                    </lib-select>
+                </div>
+
+                <div class="field col-3">
+                    <lib-select label="Namespace" [showClear]="true" [filter]="true" [editable]="true"
+                        formControlName="namespace" [options]="listStores" optionLabel="name" optionValue="name">
+                    </lib-select>
+                </div>
+
+                <div class="field col-6"></div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Tax" formControlName="tax" placeholder="Nhập tax">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Phone" maxlength="10" formControlName="phone"
+                        placeholder="Nhập số điện thoại">
+                    </lib-inputText>
+                </div>
+
+                <div class="field col-3">
+                    <lib-inputText label="Email" formControlName="email" placeholder="Nhập email">
+                    </lib-inputText>
+                </div>
+
+            </div>
+
+            <div class="col-12 pr-4">
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                    <div class="b-w-100 flex justify-content-between mb-3">
+                        <div class="flex">
+                            <h5>Thông tin chi tiết đơn hàng</h5>
+                        </div>
+                        <lib-button label="Thêm đơn hàng chi tiết" icon="pi pi-plus"
+                            (onClick)="createOrUpdateOrderDetail(null, null, true)">
+                        </lib-button>
+                    </div>
+                </div>
+
+                <lib-table [rows]="details" emptyDataMessage="Không có dữ liệu" [isLoading]="isLoading" [(page)]="page"
+                    [columns]="columns" [listAction]="listAction"
+                    [columnCacheName]="'CreateOrUpdateOrderComponent'"></lib-table>
+            </div>
+
+        </div>
+    </form>
+    <form class="form-wrapper border-form" *ngIf="!hasData">
+        <div class="grid m-0 ml-1">
+            <div class="col-12 pr-4">
+                <div class="b-w-100 flex  justify-content-center  mb-3">
+                    <div class="flex-column align-items-center  justify-content-center">
+                        <p-image [src]="EImageTable.EMPTY" alt="Image"></p-image>
+                        <p> Đơn hàng không tồn tại</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

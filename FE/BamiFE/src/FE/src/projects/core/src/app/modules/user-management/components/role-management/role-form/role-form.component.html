@@ -1,0 +1,41 @@
+<lib-loading [(isSpinner)]="isLoading" />
+<form [formGroup]="form">
+	<div class="grid form-style">
+		<div class="field col-12">
+			<lib-inputText
+				label="Tên vai trò"
+				formControlName="name"
+			/>
+		</div>
+		<div class="field col-12">
+			<lib-inputText
+				label="Mô tả"
+				formControlName="description"
+				[textarea]="true"
+			/>
+		</div>
+		<div class="col-12">
+			<div class="card permission-tree">
+				<p-tree
+					[value]="permissionsTree" selectionMode="checkbox" styleClass="permission-tree pt-0"
+					[(selection)]="selecteds"
+					(onNodeSelect)="selectedNote($event.node)"
+					(onNodeUnselect)="unSelectedNote($event.node)"
+					(onNodeContextMenuSelect)="singleSelect($event.node)"
+					[contextMenu]="cm"
+					emptyMessage="Không có dữ liệu">
+				</p-tree>
+				<p-contextMenu #cm styleClass="hidden-context-menu" [model]="[]"></p-contextMenu>
+			</div>
+		</div>
+		<lib-groupButtonSubmit
+			[permissionUpdate]="isGranted()"
+			[isEdit]="isEdit"
+			[postForm]="form"
+			[warningDataChange]="false"
+			(cancel)="closeDialog()"
+			(activeEdit)="activeEdit()"
+			(submit)="save($event)"
+		/>
+	</div>
+</form>

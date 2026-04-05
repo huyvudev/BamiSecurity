@@ -1,0 +1,150 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+    <div id="page-header">
+        <div class="header mb-3">
+            <div>
+                <h4>Chi tiết Item</h4>
+            </div>
+            <div class="actions">
+                <lib-button styleClass="ml-3 system-style p-button" (onClick)="back()" label="Quay lại"
+                    icon="pi pi-angle-left">
+                </lib-button>
+            </div>
+        </div>
+        <lib-table-filter  [items]="itemFilters" (_onChange)="getItem($event.id)" />
+    </div>
+    <form class="form-wrapper" *ngIf="hasData" [formGroup]="postForm" (ngSubmit)="onSubmit()">
+        <div class="grid m-0 ml-1">
+            <div class="col-12 grid form-style">
+                <div class="col-12 grid form-style">
+                    <div class="field col-3">
+                        <lib-inputText label="Template" placeholder="template" formControlName="template">
+                        </lib-inputText>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputText label="Sku" placeholder="code" formControlName="code">
+                        </lib-inputText>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputText label="Kích thước" placeholder="Kích thước" formControlName="size">
+                        </lib-inputText>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputText label="Ghi chú" placeholder="Ghi chú" formControlName="note">
+                        </lib-inputText>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputNumber label="OrderId" placeholder="orderId" formControlName="orderId">
+                        </lib-inputNumber>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputNumber label="Item Index" placeholder="itemIndex" formControlName="itemIndex">
+                        </lib-inputNumber>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputText label="namespace" placeholder="namespace" formControlName="namespace">
+                        </lib-inputText>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputNumber label="Chiều rộng" placeholder="width" formControlName="width">
+                        </lib-inputNumber>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputNumber label="Chiều dài" placeholder="length" formControlName="length">
+                        </lib-inputNumber>
+                    </div>
+
+                    <div class="field col-3">
+                        <lib-inputText label="Lời nhắn lỗi" placeholder="errorMessage" formControlName="errorMessage">
+                        </lib-inputText>
+                    </div>
+                    <div class="field col-9">
+                      
+                    </div>
+
+                    <div class="field col-6">
+                        <label htmlFor="mainImg"> MockUp Front </label>
+                        <div
+                            class="image-zone-upload-boder  fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload max-w-27rem max-h-27rem" [isShowImage]="true"
+                                [src]="getMainImage('mockUpFront')" [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                    </div>
+
+                    <div class="field col-6">
+                        <label htmlFor="mainImg"> MockUp Back </label>
+                        <div
+                            class="image-zone-upload-boder  fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true" [src]="getMainImage('mockUpBack')"
+                                [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                    </div>
+
+                    <div class="field col-6">
+                        <label htmlFor="mainImg"> Design Front </label>
+                        <div
+                            class="image-zone-upload-boder  fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true" [src]="getMainImage('designFront')"
+                                [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                    </div>
+
+                    <div class="field col-6">
+                        <label htmlFor="mainImg"> Design Back </label>
+                        <div
+                            class="image-zone-upload-boder  fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true" [src]="getMainImage('designBack')"
+                                [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                    </div>
+
+                    <div class="field col-6">
+                        <label htmlFor="mainImg"> Design Sleeves </label>
+                        <div
+                            class="image-zone-upload-boder  fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true" [src]="getMainImage('designSleeves')"
+                                [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                    </div>
+
+                    <div class="field col-6">
+                        <label htmlFor="mainImg"> Design Hood </label>
+                        <div
+                            class="image-zone-upload-boder  fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image class="image-zone-upload" [isShowImage]="true" [src]="getMainImage('designHood')"
+                                [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form class="form-wrapper border-form" *ngIf="!hasData">
+        <div class="grid m-0 ml-1">
+            <div class="col-12 pr-4">
+                <div class="b-w-100 flex  justify-content-center  mb-3">
+                    <div class="flex-column align-items-center  justify-content-center">
+                        <p-image [src]="EImageTable.EMPTY" alt="Image"></p-image>
+                        <p> Đơn hàng không tồn tại</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

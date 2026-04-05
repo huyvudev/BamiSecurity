@@ -1,0 +1,81 @@
+<lib-loading [(isSpinner)]="isUploading"></lib-loading>
+<div class="ui-dialog-content-custom wrapper-upload form-wrapper">
+    <div class="grid">
+        <div *ngIf="dialogData.titleInput" class="col-12 grid form-style">
+            <div class="field col-12">
+                <label> {{ dialogData.titleInput }} <span class="required-field" *ngIf="dialogData.inputRequired"> * </span></label>
+                <input
+                    type="text" id="input" name="input" pInputText style="width: '100%';"
+                    [(ngModel)]="inputValue" (input)="changeValue($event.target.value)"
+                />
+            </div>
+        </div>
+    </div>
+	<!-- [maxFileSize]="BaseConsts.maxSizeUpdate" -->
+    <p-fileUpload
+        #pUpload
+        [multiple]="dialogData.multiple" customUpload="true" auto="true"
+        styleClass="e-file-upload {{ files?.length > 3 ? 'fix-height' : '' }} {{ (files && files?.length < 5) ? '' : 'check-show-upload' }}"
+        [invalidFileTypeMessageSummary]="'Các định dạng file hợp lệ'"
+        [chooseLabel]="dialogData.chooseLabel" 
+		[showUploadButton]="false" size="small"
+		[accept]="dialogData.accept | libAcceptFile" 
+		(onSelect)="onSelectedFiles($event)">
+        <ng-template let-file pTemplate="file"></ng-template>
+        <ng-template pTemplate="content">
+            <p-progressBar *ngIf="isUploading" mode="indeterminate"></p-progressBar>
+            <div class="w-full mb-1">
+                <span class="ml-1">Chỉ có thể upload {{ dialogData?.quantity}} file một lần</span>
+            </div>
+            <div *ngFor="let file of files; index as index" class="gallery">
+                <ng-container *ngIf="(fileType | function: file) === EAcceptFile.IMAGE">
+                    <div (click)="preview(file)" class="gallery-image" [ngStyle]="{background: 'url('+ (file?.objectURL?.changingThisBreaksApplicationSecurity || file?.objectUrl) +')' }">
+                        <div class="overlay-preview">
+                            <icon class="pi pi-eye"></icon>
+                        </div>
+                    </div>
+                    <div class="icon-actions">
+                        <!-- <img
+                            class="icon-crop icon mr-3" title="Chỉnh sửa ảnh"
+                            src="shared/assets/layout/images/icons/icon-crop-image.png"
+                            (click)="cropImage(file, index)"
+                        /> -->
+                        <i
+                            title="Chỉnh sửa ảnh"
+                            class="pi pi-pencil icon-crop icon mr-3"
+                            (click)="cropImage(file, index)"
+                        >
+                        </i>
+                        <!--  -->
+                        <i
+                            title="Xóa ảnh"
+                            class="remove-img pi pi-trash icon"
+                            (click)="removeFile(index, fileUpload)"
+                        >
+                        </i>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="(fileType | function: file) === EAcceptFile.VIDEO">
+                    <div class="gallery-video">
+                        <lib-video [src]="file" [height]="'auto'"></lib-video>
+                    </div>
+                    <div class="icon-actions">
+                        <i
+                            title="Xóa video"
+                            class="remove-img pi pi-trash icon"
+                            (click)="removeFile(index, fileUpload)"
+                        >
+                        </i>
+                    </div>
+                </ng-container>
+            </div>
+            <ng-container *ngIf="inputValue && (Utils.isExtensionVideo(inputValue) || Utils.checkLinkYoutube(inputValue))">
+                <lib-video [src]="inputValue"></lib-video>
+            </ng-container>
+        </ng-template>
+    </p-fileUpload>
+</div>
+<div class="p-dialog-footer e-custom-dialog-footer">
+    <button type="button" class="mr-2 btn-cancel" pButton iconPos="left" label="Hủy" icon="pi pi-times" (click)="hideDialog()"></button>
+    <button type="submit" class="system-style" pButton iconPos="left" [label]="!isUploading ? 'Hoàn thành' : 'Đang xử lý .....'" [disabled]="isUploading" (click)="onUpload()"></button>
+</div>

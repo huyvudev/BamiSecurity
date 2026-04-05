@@ -1,0 +1,100 @@
+<div id="page-list">
+    <div id="page-header">
+
+        <div class="header">
+
+            <div>
+                <h4> Danh sách Baskets </h4>
+            </div>
+
+            <div class="actions">
+
+                <lib-button (onClick)="addBasket()" icon="pi" iconType="create-s" label="Thống kê thêm giỏ" />
+
+                <lib-button (onClick)="deleteBasket()" icon="pi" iconType="create-s" label="Thống kê xóa giỏ" />
+
+                <lib-button (onClick)="unCompletedBasket()" icon="pi" iconType="create-s"
+                    label="Thống kê giỏ chưa hoàn thành" />
+
+                <lib-button (onClick)="unCompletedBasket()" icon="pi" label="Export" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" /> -->
+    <div id="filter-table">
+        <ng-container>
+            <div class="filter-wrapper">
+                <div class="flex-column">
+                    <span>Địa chỉ</span>
+                    <div class="filter-wrapper mt-2">
+                        <div>
+                            <button (click)="changeStatusAddress(0)"
+                                [ngClass]="{'statusActive' : currentStautsAddress == 0}" class="btn-status"><span>Tất
+                                    cả</span></button>
+                        </div>
+                        <div *ngFor="let status of statusAddress; let i = index">
+                            <button (click)="changeStatusAddress(i+1)"
+                                [ngClass]="{'statusActive' : currentStautsAddress == i+1}"
+                                class="btn-status"><span>{{status?.name}}</span></button>
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
+                <div class="flex-column ml-4">
+                    <span>Trạng thái giỏ</span>
+                    <div class="filter-wrapper mt-2">
+                        <div>
+                            <button (click)="changeStatusBasket(0)"
+                                [ngClass]="{'statusActive' : currentStautsBaskets == 0}" class="btn-status"><span>Tất
+                                    cả</span></button>
+                        </div>
+                        <div *ngFor="let status of statusBaskets; let i = index">
+                            <button (click)="changeStatusBasket(i+1)"
+                                [ngClass]="{'statusActive' : currentStautsBaskets == i+1}"
+                                class="btn-status"><span>{{status?.name}}</span></button>
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
+                <div class="w-15rem filter ml-4">
+                    <lib-inputText label="Mã đơn" placeholder="Tìm theo mã đơn"></lib-inputText>
+                </div>
+
+                <div class="w-15rem filter ml-3">
+                    <lib-inputText label="Mã giỏ" placeholder="Tìm theo mã giỏ"></lib-inputText>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+    <div id="filter-table">
+        <ng-container>
+            <div class="filter-wrapper">
+
+                <div class="w-15rem filter ">
+                    <lib-select [showClear]="true" label="Loại đơn" [options]="typeOrder" optionValue="code"
+                        optionLabel="name"></lib-select>
+                </div>
+
+                <div class="w-15rem filter ml-3">
+                    <lib-select [showClear]="true" label="Partner" [options]="typeOrder" optionValue="code"
+                        optionLabel="name"></lib-select>
+                </div>
+                <div class="w-20rem filter ml-3">
+                    <lib-calendar selectionMode="range" label="Ngày hoàn thành"></lib-calendar>
+                </div>
+
+            </div>
+        </ng-container>
+    </div>
+
+
+    <lib-table [rows]="rows" [isLoading]="isLoading" [(page)]="page" [columns]="columns" [listAction]="listAction"
+        [columnCacheName]="'MainLabelsComponent'" (_onPageChange)="setPage()">
+    </lib-table>
+
+</div>

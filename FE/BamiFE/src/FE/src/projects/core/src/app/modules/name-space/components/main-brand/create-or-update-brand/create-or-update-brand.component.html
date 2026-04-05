@@ -1,0 +1,63 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+
+    <div id="page-header">
+        <div class="header mb-3">
+            <div>
+                <h4 *ngIf="this.idBrand">Chỉnh sửa Brand</h4>
+                <h4 *ngIf="!this.idBrand">Thêm Brand</h4>
+            </div>
+            <div class="actions">
+                <lib-button styleClass="ml-3 system-style p-button" label="Quay lại" (onClick)="back()"
+                    icon="pi pi-angle-left">
+                </lib-button>
+            </div>
+        </div>
+    </div>
+    
+    <form [formGroup]="postForm" (ngSubmit)="onSumbit()">
+
+
+        <div class="btn-actions mt-3">
+            <div class="flex justify-content-end">
+                <ng-container>
+                    <lib-button *ngIf="idBrand &&! isEdit" icon="pi pi-pencil" styleClass="system-style"
+                        label="Chỉnh sửa" (onClick)="activeEdit()">
+                    </lib-button>
+                    <lib-button *ngIf="!idBrand || isEdit" type="btn-submit" label="Lưu" icon="pi pi-save"
+                        styleClass="system-style p-button ml-3"></lib-button>
+                    <lib-button *ngIf="isEdit && idBrand" styleClass="btn-cancel ml-2" label="Hủy" (onClick)="cancel()">
+                    </lib-button>
+                </ng-container>
+            </div>
+        </div>
+
+
+        <div class="grid m-0 ml-1">
+
+            <div class="col-12 grid form-style">
+                <div class="field col-12 mb-2">
+                    <lib-inputText label="Name" formControlName="name"></lib-inputText>
+                </div>
+            </div>
+
+            <div class="col-12 pr-4">
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                    <div class="b-w-100 flex justify-content-between mb-3">
+                        <div class="flex">
+                            <h5>Thông tin Store</h5>
+                        </div>
+                        <lib-button label="Thêm Store" icon="pi pi-plus"
+                            (onClick)="createOrUpdateStore(null, null, true)">
+                        </lib-button>
+                    </div>
+                </div>
+
+                <lib-table [rows]="stores" emptyDataMessage="Không có dữ liệu" [isLoading]="isLoading" [(page)]="page"
+                    [columns]="columns" [listAction]="listAction"
+                    [columnCacheName]="'CreateOrUpdateOrderComponent'"></lib-table>
+            </div>
+        </div>
+
+    </form>
+</div>

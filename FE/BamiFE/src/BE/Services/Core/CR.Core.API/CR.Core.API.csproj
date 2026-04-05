@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<InvariantGlobalization>false</InvariantGlobalization>
+		<UserSecretsId>79ace56c-30a4-428d-bde2-b9e860fa6550</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..\..</DockerfileContext>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+	<ItemGroup>
+		<Content Include="*.pem">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Include="*.crt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Include="*.pfx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Controllers\Core\Customer\**" />
+	  <Content Remove="Controllers\Core\Customer\**" />
+	  <EmbeddedResource Remove="Controllers\Core\Customer\**" />
+	  <None Remove="Controllers\Core\Customer\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="7.0.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
+		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
+		<PackageReference Include="System.Net.Primitives" Version="4.3.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Library\Infrastructure\CR.LLM\CR.LLM.csproj" />
+		<ProjectReference Include="..\..\..\Library\Infrastructure\CR.S3Bucket\CR.S3Bucket.csproj" />
+		<ProjectReference Include="..\..\..\Library\CR.IdentityServerBase\CR.IdentityServerBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\CR.WebAPIBase\CR.WebAPIBase.csproj" />
+		<ProjectReference Include="..\..\..\Tools\CR.Project.ServiceDefaults\CR.Project.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\Shared\CR.UserRolePermission\CR.UserRolePermission.csproj" />
+		<ProjectReference Include="..\CR.Core.Infrastructure\CR.Core.Infrastructure.csproj" />
+		<ProjectReference Include="..\CR.Core.ApplicationServices\CR.Core.ApplicationServices.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="wwwroot\" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,53 @@
+<lib-loading [(isSpinner)]="isLoading" />
+
+<form [formGroup]="form">
+	<!--  -->
+	<input type="text" name="username" class="input-focus"/>
+	<input type="password" name="password" class="input-focus"/>
+	<!--  -->
+	<div class="grid form-style">
+		<div class="field col-6 username">
+			<lib-inputText label="Tên đăng nhập" formControlName="username" />
+		</div>
+		<div class="field col-6" *ngIf="!accountId">
+			<lib-password label="Mật khẩu" formControlName="password" />
+		</div>
+		<div class="field col-6">
+			<lib-inputText label="Họ và tên" formControlName="fullName" />
+		</div>
+		<div class="field col-6">
+			<lib-select 
+				label="Giới tính" 
+				formControlName="gender" 
+				[options]="SexConst.list"
+				optionLabel="name" optionValue="code" 
+			/>
+		</div>
+		<div class="field col-6">
+			<lib-inputText label="Email" formControlName="email" />
+		</div>
+		<div class="field col-6">
+			<lib-inputText label="Số điện thoại" formControlName="phone" />
+		</div>
+		<div class="field col-6">
+			<lib-calendar label="Ngày sinh" formControlName="dateOfBirth" />
+		</div>
+		<div class="field {{ !accountId ? 'col-6' : 'col-12' }}">
+			<lib-multiSelect 
+				label="Vai trò" 
+				formControlName="roles" 
+				[options]="roles"
+				optionLabel="name" optionValue="id" 
+				[showTooltip]="true"
+			/>
+		</div>
+		<lib-groupButtonSubmit
+			[permissionUpdate]="isGranted()"
+			[isEdit]="isEdit"
+			[postForm]="form"
+			(cancel)="closeDialog()"
+			(activeEdit)="activeEdit()"
+			(submit)="save($event)"
+		/>
+	</div>
+</form>

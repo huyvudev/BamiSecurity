@@ -1,0 +1,55 @@
+<ng-container>
+    <div class="mt-2 mb-2">
+        <p class="size-text" *ngIf="imageInfo"> Kích thước: {{ imageInfo.height }}x{{ imageInfo.width }} </p>
+    </div>
+    <div [style.maxWidth.px]="500">
+        <image-cropper
+            [imageFile]="fileImage"
+            [imageURL]="fileUrl"
+            [maintainAspectRatio]="false"
+            [containWithinAspectRatio]="false"
+            [cropperMinWidth]="128"
+            [onlyScaleDown]="false"
+            [roundCropper]="false"
+            [canvasRotation]="0"
+            [allowMoveImage]="true"
+            [transform]="transform"
+            [alignImage]="'left'"
+            [style.display]="showCropper ? null : 'none'"
+            format="png"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded()"
+            (cropperReady)="cropperReady($event)"
+            (loadImageFailed)="loadImageFailed()"
+        >
+        </image-cropper>
+    </div>
+    <!--  -->
+    <ng-container *ngIf="showCropper">
+        <div class="p-3 grid">
+            <div class="col-1 text-right">
+                <i class="pi pi-minus icon-image"></i>
+            </div>
+            <div class="col-10 pt-3">
+                <p-slider [(ngModel)]="zoomValue" (onChange)="zoom($event.value)" [style]="{ width: '100%', }"></p-slider>
+            </div>
+            <div class="col-1">
+                <i class="pi pi-plus icon-image"></i>
+            </div>
+        </div>
+
+        <div class="p-dialog-footer custom-dialog-footer">
+            <button 
+				type="button" pButton pRipple [label]="'Hủy'"
+                class="btn-cancel" (click)="close()">
+			</button>
+            <button
+               type="submit" pButton pRipple
+                class="system-style"
+                label="Hoàn thành" (click)="save()"
+            ></button>
+        </div>
+    </ng-container>
+    
+</ng-container>
+    

@@ -1,0 +1,7 @@
+::ng-deep {
+	.lib-textarea {
+		&.overflow-y-hidden {
+			overflow-y: hidden !important;
+		}
+	}
+}

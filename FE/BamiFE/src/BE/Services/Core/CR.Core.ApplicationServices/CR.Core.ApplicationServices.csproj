@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Common\Localization\SourceFiles\*.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Common\MultiTenancy\**" />
+	  <EmbeddedResource Remove="Common\MultiTenancy\**" />
+	  <None Remove="Common\MultiTenancy\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" Version="0.102.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Library\CR.WebAPIBase\CR.WebAPIBase.csproj" />
+		<ProjectReference Include="..\..\..\Library\Infrastructure\CR.ConvertFile\CR.ConvertFile.csproj" />
+		<ProjectReference Include="..\..\..\Library\Infrastructure\CR.S3Bucket\CR.S3Bucket.csproj" />
+		<ProjectReference Include="..\..\..\Library\Infrastructure\OpenXMLLibrary\OpenXMLLibrary.csproj" />
+		<ProjectReference Include="..\..\..\Library\CR.ApplicationBase\CR.ApplicationBase.csproj" />
+		<ProjectReference Include="..\..\Shared\CR.Common\CR.Common.csproj" />
+		<ProjectReference Include="..\CR.Core.Dtos\CR.Core.Dtos.csproj" />
+		<ProjectReference Include="..\CR.Core.Infrastructure\CR.Core.Infrastructure.csproj" />
+	</ItemGroup>
+</Project>

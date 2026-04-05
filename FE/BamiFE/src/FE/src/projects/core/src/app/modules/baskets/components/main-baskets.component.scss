@@ -1,0 +1,22 @@
+.btn-status{
+    position: relative;
+    display: inline-block;
+    height: 32px;
+    margin: 0;
+    padding: 0 15px;
+    color: rgba(0, 0, 0, .65);
+    line-height: 30px;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-top: 1.02px solid #d9d9d9;
+    border-left: 1;
+    cursor: pointer;
+
+    .active{
+        color: red;
+    }
+}
+.statusActive{
+    border-color:  #0a60ff;
+    color: #0a60ff;
+}

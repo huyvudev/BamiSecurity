@@ -1,0 +1,104 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<div id="page-content" class="page-detail">
+    <div id="page-header">
+        <div class="header mb-3">
+            <div>
+                <h4 *ngIf="this.idSku">Chỉnh sửa sku</h4>
+                <h4 *ngIf="!this.idSku">Thêm sku</h4>
+            </div>
+            <div class="actions">
+
+                <lib-button styleClass="ml-3 system-style p-button" label="Quay lại" (onClick)="back()"
+                    icon="pi pi-angle-left">
+                </lib-button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper-form-dialog">
+        <form [formGroup]="postForm" (ngSubmit)="onSumbit()">
+            <div class="btn-actions mt-3">
+                <div class="flex justify-content-end">
+                    <ng-container>
+                        <lib-button *ngIf="idSku &&! isEdit" icon="pi pi-pencil" styleClass="system-style"
+                            label="Chỉnh sửa" (onClick)="activeEdit()">
+                        </lib-button>
+                        <lib-button *ngIf="!idSku || isEdit" type="btn-submit" label="Lưu" icon="pi pi-save"
+                            styleClass="system-style p-button ml-3"></lib-button>
+                        <lib-button *ngIf="isEdit && idSku" styleClass="btn-cancel ml-2" label="Hủy"
+                            (onClick)="cancel()">
+                        </lib-button>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="form-dialog grid m-0">
+
+                <div class="field col-6 mb-2">
+                    <lib-inputText label="Code" formControlName="code"></lib-inputText>
+                </div>
+
+                <div class="field col-6 mb-2">
+                    <lib-inputText label="Mô tả" [textarea]="true" rows="1"
+                        formControlName="description"></lib-inputText>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-select [showClear]="true" formControlName="skuBaseId" label="SkuBase" [options]="ListSkuBase"
+                        optionValue="id" optionLabel="code">
+                    </lib-select>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-select [showClear]="true" formControlName="materialId" label="Chất liệu"
+                        [options]="ListMaterails" optionValue="id" optionLabel="code">
+                    </lib-select>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-select [showClear]="true" formControlName="productMethodId" label="Phương thức sản xuất"
+                        [options]="ListProductMethod" optionValue="id" optionLabel="code">
+                    </lib-select>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-inputSwitch label="Kích thước lớn" formControlName="isBigSize"></lib-inputSwitch>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-inputSwitch label="Hoạt động" formControlName="isActive"></lib-inputSwitch>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-inputSwitch label="Cần phải xem lại" formControlName="needToReview"></lib-inputSwitch>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-inputSwitch label="Cần quản lý chất liệu"
+                        formControlName="needManageMaterials"></lib-inputSwitch>
+                </div>
+
+                <div class="field col-4 mb-2">
+                    <lib-inputSwitch label="Cho phép QC nhiều item"
+                        formControlName="allowQcMultipleItems"></lib-inputSwitch>
+                </div>
+                <div class="col-12 pr-4">
+                    <div class="flex justify-content-between flex-column sm:flex-row">
+                        <div class="b-w-100 flex justify-content-between mb-3">
+                            <div class="flex">
+                                <h5>Thông tin sku size</h5>
+                            </div>
+                            <lib-button label="Thêm sku size" icon="pi pi-plus"
+                                (onClick)="createOrUpdateMockupSku(null, null, true)">
+                            </lib-button>
+                        </div>
+                    </div>
+
+                    <lib-table [rows]="skuSizes" emptyDataMessage="Không có dữ liệu" [isLoading]="isLoading"
+                        [(page)]="page" [columns]="columns" [listAction]="listAction"
+                        [columnCacheName]="'CreateOrUpdateSkuComponent'"></lib-table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

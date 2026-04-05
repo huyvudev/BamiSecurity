@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<!--Định nghĩa các lỗi validation-->
+		<text name="error_validation_CoreCustomerTempAvatarMaxLength">Ảnh đại diện không được dài hơn {0} ký tự</text>
+		<!--Định nghĩa các lỗi otp-->
+		<text name="error_CoreSendOtpMultipleRequest">Vượt quá số lần gửi mã xác thực cho phép</text>
+		<text name="error_CoreVerifyOtpNotFound">Không tồn tại mã OTP</text>
+		<text name="error_CoreOtpIsVerified">Otp đã xác thực</text>
+		<text name="error_CoreVerifyOtpTurnEnd">Mã OTP đã hết lượt xác thực. Vui lòng yêu cầu gửi lại</text>
+		<text name="error_CoreVerifyOtpTimeout">Mã OTP đã hết hạn. Vui lòng yêu cầu gửi lại.</text>
+		<text name="error_CoreOtpIsInvalid">Mã xác thực không hợp lệ, còn {0} lần nhập.</text>
+		<text name="error_VerifyOtpNotSuccess">{0}</text>
+		<text name="error_CoreUserForgotLinkIsExpired">Đường dẫn đã hết hạn</text>
+		<text name="error_CoreUserForgotLinkIsInvalid">Mã khôi phục không chính xác vui lòng liên hệ quản trị viên để được hỗ trợ</text>
+		<!--Định nghĩa các lỗi-->
+		<text name="error_CoreProductMethodCodeExisted">Mã phương thức sản xuất không được trùng</text>
+		<text name="error_CoreProductMethodNotFound">Không tìm thấy phương thức sản xuất</text>
+		<text name="error_CoreSkuCodeError">Sinh code SKU lỗi</text>
+		<text name="error_CoreSkuCodeExisted">Mã SKU đã tồn tại</text>
+		<text name="error_CoreSkuNotFound">Không tìm thấy SKU</text>
+		<text name="error_CoreMaterialCodeExisted">Mã vật liệu đã tồn tại</text>
+		<text name="error_CoreMaterialNotFound">Không tìm thấy vật liệu</text>
+		<text name="error_CoreSkuBaseNotFound">Không tìm thấy SKU cơ sở</text>
+		<text name="error_CoreSkuBaseCodeExisted">Mã SKU cơ sở đã tồn tại</text>
+		<text name="error_CoreSkuSizeNameExisted">Tên kích thước SKU đã tồn tại</text>
+		<text name="error_CoreSkuSizeNotFound">Không tìm thấy kích thước SKU</text>
+		<text name="error_CoreSkuSizePkgMockupNotFound">Không tìm thấy hình ảnh mockup của kích thước SKU</text>		
+		<text name="error_CoreBrandNameHasBeenUsed">Tên brand đã được dùng</text>
+		<text name="error_CoreBrandNotFound">Không tìm thấy brand</text>
+		<text name="error_CoreStoreNameHasBeenUsed">Tên store đã được dùng</text>
+		<text name="error_CoreStoreNotFound">Không tìm thấy store</text>
+		<text name="error_CorePartnerTypeNameHasBeenUsed">Tên kiểu đối tác đã được dùng</text>
+		<text name="error_CorePartnerTypeNotFound">Không tìm thấy kiểu đối tác</text>
+		<text name="error_CorePartnerNotFound">Không tìm thấy đối tác</text>
+		<text name="error_CorePartnerNameHasBeenUsed">Tên đối tác đã được dùng</text>
+		<text name="error_CorePartnerTypeDoesNotExist">Kiểu đối tác không tồn tại</text>
+		<text name="error_CoreBrandDoesNotExist">Brand không tồn tại</text>
+		<text name="error_CoreOrderNotFound">Đơn hàng không tồn tại</text>
+		<text name="error_CoreOrderNumberHasBeenUsed">Mã đơn hàng đã tồn tại</text>
+		<text name="error_CoreOrderDetailNotFound">Order detail không tồn tại</text>
+		<text name="error_CoreLackOfBasicInformationForOrderDetail">Thiếu các thông tin cơ bản của order detail</text>
+		<text name="error_CoreOrderDetailApproved">Order detail đã được duyệt, không thể sửa</text>
+		<text name="error_CoreOrderItemNotFound">Không tìm thấy order item</text>
+		<text name="error_CoreOrderDetailNotDone">Vẫn còn Order Detail chưa hoàn thành</text>
+		<text name="error_CoreOrderCantDelete">Order không thể xóa</text>
+		<text name="error_CoreOrderPushed">Order đã được đẩy</text>
+		<text name="error_CoreSkuSizeCreateFailed">Tạo kích thước SKU thất bại</text>
+		<text name="error_CoreSkuMockUpCreateFailed">Tạo mockup SKU thất bại</text>
+		<text name="error_CoreBatchMustNotEmpty">Lô không được trống, vui lòng bổ sung item hợp lệ</text>
+		<text name="error_CoreBatchNotFound">Không tìm thấy lô</text>
+		<text name="error_CoreOrderItemsDifferentSku">Các item trong lô không có cùng SKU</text>
+		<text name="error_CoreOrderItemInvalidOrInOtherBatch">Item {0} không tồn tại hoặc ở trong lô khác</text>
+		<text name="error_CoreBatchInvalid">Lô {0} không hợp lệ</text>"
+		<text name="error_CoreOrderItemStatusCannotRevert">Không thể quay lại về trạng thái trước. Item: {0}</text>"
+		<text name="error_CoreOrderItemNotInBatch">Item {0} hiện chưa phân lô</text>"
+	</texts>
+</localizationDictionary>

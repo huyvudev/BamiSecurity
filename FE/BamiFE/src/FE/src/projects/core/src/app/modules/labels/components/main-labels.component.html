@@ -1,0 +1,40 @@
+<div id="page-list">
+    <div id="page-header">
+
+        <div class="header">
+            
+            <div>
+                <h4> Danh sách Label </h4>
+            </div>
+
+            <div class="actions">
+
+                <lib-button 
+                    (onClick)="listJob()" 
+                    icon="pi pi-upload" 
+                    label="Import từ PDF" />
+
+                <lib-button 
+                    (onClick)="importPDF()" 
+                    icon="pi pi-list" 
+                    label="List Job Label" />
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <lib-table-filter [items]="itemFilters" (_onChange)="setPage($event)" />
+
+    <lib-table 
+        [rows]="rows" 
+        [isLoading]="isLoading" 
+        [(page)]="page" 
+        [columns]="columns" 
+        [listAction]="listAction"
+        [columnCacheName]="'MainLabelsComponent'" 
+        (_onPageChange)="setPage()">
+    </lib-table>
+
+</div>

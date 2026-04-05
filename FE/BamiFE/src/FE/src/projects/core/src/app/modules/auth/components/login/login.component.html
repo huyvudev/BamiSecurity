@@ -1,0 +1,66 @@
+<p-toast></p-toast>
+<div class="login-body" [ngClass]="{'mobile': isMobile(), 'desktop': !isMobile()}" style="position: relative;">
+    <ngx-spinner
+        type="ball-spin-clockwise"
+        size="default"
+        [fullScreen]="true">
+    </ngx-spinner>
+    <div class="login-content" [ngClass]="{'flex-column': isMobile()}">
+        <div class="login-content-left" [ngClass]="{'col-12 p-5': isMobile(), 'col-6 half': !isMobile()}">
+            <div class="login-content-left-main"> 
+                <div class="login-form" [ngClass]="{'w-full': isMobile(), 'w-32rem': !isMobile()}">
+                    <div class="login-title">
+                        <!-- <div class="logo">
+                            <img src="assets/layout/images/logo-light.png" alt="Logo">
+                        </div> -->
+                        <h2>{{isForgotPass ? 'Quên mật khẩu' : 'Đăng nhập'}}</h2>
+                        <p *ngIf="!isForgotPass" class="login-title-sub mb-4">
+                            Chào mừng đến với hệ thống quản lý, đăng nhập để trải nghiệm ngay các tính năng!
+                        </p>
+                        <p *ngIf="isForgotPass" class="login-title-sub mb-4">
+                            Nhập tài khoản của bạn để lấy lại mật khẩu
+                        </p>
+                    </div>
+                    <div class="login-input-wrapper mb-1">
+                        <label for="username" class="phone_login">Tài khoản</label>
+                        <input class="w-full" id="username" #username (keyup.enter)="login()" pInputText [(ngModel)]="user.username"
+                            placeholder="Nhập tài khoản" />
+                    </div>
+
+                    <div *ngIf="!isForgotPass" class="login-input-wrapper mt-4">
+                        <label for="password" class="pass_login">Mật khẩu</label>
+                        <input class="w-full" type="password" id="password" (keyup.enter)="login()" pPassword
+                            [(ngModel)]="user.password" [feedback]="false" placeholder="Nhập mật khẩu" />
+                    </div>
+                    <div *ngIf="!isForgotPass" class="login-handle">
+                        <div class="remember-and-forgetPass justify-content-between flex-wrap"> 
+                            <p class="remember_pass">Bạn chưa có tài khoản? <a class="ml-2" href="authentication/register">Đăng ký ngay</a></p>
+                            <a class="ml-2" [ngClass]="{'pt-2': isMobile(), '': !isMobile()}" style="float: right;" (click)="forgotPass()">Quên mật khẩu</a>
+                        </div>
+                    </div>
+
+                    <div class="buttons mt-4">
+                        <button class="login-button mb-2 w-full" pButton type="button" (click)="login()"
+                            label="{{isForgotPass ? 'Lấy lại mật khẩu' : 'Đăng nhập'}}"
+                            [disabled]="submitting"></button>
+                        <button class="help-button w-full" pButton type="button" label="Hotline 091.222.8386">
+                            <i class="pi pi-question-circle question-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="no-copy-right-center">
+                    <p class="no-copy-right">
+                        Bản quyền thuộc Helios LMS &#64;2024
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="login-content-right" [ngClass]="{'col-12': isMobile(), 'col-6': !isMobile()}" *ngIf="!isMobile()">
+            <div class="ellipse-img">
+                <div style="font-size: 3rem;color: #fff;">Welcome to Helios Hub</div>
+                <div class="mt-2 mb-3" style="font-size: 1.3rem;color: #fff;">Everything is thought to make it easy.</div>
+                <!-- <img src="assets/layout/images/onboarding.svg" /> -->
+            </div>
+        </div>
+    </div>
+</div>

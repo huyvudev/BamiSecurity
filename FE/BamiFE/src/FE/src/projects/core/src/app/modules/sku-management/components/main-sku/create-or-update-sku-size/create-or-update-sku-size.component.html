@@ -1,0 +1,98 @@
+<lib-loading [(isSpinner)]="isLoading"></lib-loading>
+<form class="form-wrapper" [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <div class="grid m-0">
+        <div class="col-12 grid form-style">
+            <div class="col-12 grid form-style">
+
+                <div class="field col-4">
+                    <lib-inputText label="Name" formControlName="name">
+                    </lib-inputText>
+
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber  label="Chiều rộng" formControlName="width">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Chiều cao" formControlName="height">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Chiều dài" formControlName="length">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Trọng lượng" formControlName="weight">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Trọng lượng Tiêu chuẩn" formControlName="additionalWeight">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Giá cơ bản" formControlName="baseCost">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Giá theo mét" formControlName="costInMeters">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-4">
+                    <lib-inputNumber label="Trọng lượng theo thể tích" formControlName="weightByVolume">
+                    </lib-inputNumber>
+                </div>
+                <div class="field col-12">
+                    <lib-inputText [textarea]="true" [rows]="3" label="Mô tả đóng gói"
+                        formControlName="packageDescription">
+                    </lib-inputText>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 grid form-style">
+            <div class="col-12 grid form-style">
+
+                <ng-container *ngIf="mockups && mockups.controls.length > 0" formArrayName="mockUpsList">
+                    <div class="field col-6" *ngFor="let mockup of mockups.controls; let i = index" [formGroupName]="i">
+                        <label htmlFor="mainImg">MockUp</label>
+                        <div class="image-zone-upload-boder fix-height flex align-items-center justify-content-center mt-1">
+                            <lib-image 
+                                class="image-zone-upload max-w-27rem max-h-27rem" 
+                                [isShowImage]="true"
+                                [src]="getMainImage('mockupUrl', i)" 
+                                [imageDefault]="imageDefault">
+                            </lib-image>
+                        </div>
+                
+                        <div class="flex flex-row justify-content-center">
+                            <p-fileUpload 
+                                class="mr-2" 
+                                mode="basic" 
+                                chooseLabel="Chọn ảnh" 
+                                chooseIcon="pi pi-upload" 
+                                name="input" 
+                                [auto]="true" 
+                                url="{{uploadApi}}" 
+                                accept="image/*" 
+                                [maxFileSize]="maxSize"
+                                (onUpload)="selectImg($event, i)">
+                            </p-fileUpload>
+                
+                            <lib-button class="ml-2" label="Xóa " (click)="removeMockup(i)">
+                            </lib-button>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <lib-button class="mt-2" label="Thêm MockUp" (click)="addMockup()">
+                </lib-button>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="p-dialog-footer custom-dialog-footer">
+        <lib-button label="Hủy" iconType="cancel" (onClick)="onClose()"></lib-button>
+        <lib-button type="submit" label="Save" iconType="save"></lib-button>
+    </div>
+</form>

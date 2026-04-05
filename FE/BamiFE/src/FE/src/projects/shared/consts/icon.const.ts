@@ -1,0 +1,15 @@
+export enum Icons {
+    ICON_OVERVIEW = "shared/assets/layout/images/icons/icon_overview.svg",
+    ICON_BOOK = "shared/assets/layout/images/icons/icon-book.svg",
+    ICON_FOLDER = "shared/assets/layout/images/icons/icon-folder.svg",
+    ICON_FOLDER_ACTIVE = "shared/assets/layout/images/icons/icon-folder-active.svg",
+    ICON_IDEN = "shared/assets/layout/images/icons/icon-iden.svg",
+    ICON_NOTI = "shared/assets/layout/images/icons/icon-noti.svg",
+    ICON_PAPER = "shared/assets/layout/images/icons/icon-paper.svg",
+    ICON_SEND = "shared/assets/layout/images/icons/icon-send.svg",
+    ICON_SETTING = "shared/assets/layout/images/icons/icon-setting.svg",
+    ICON_USER = "shared/assets/layout/images/icons/icon-user.svg",
+    ICON_EMPLOYEE = "shared/assets/layout/images/icons/topbar-employee.svg",
+    ICON_MANAGER = "shared/assets/layout/images/icons/topbar-manager.svg",
+    ICON_MAP = "shared/assets/layout/images/icons/icon-map.svg",
+}

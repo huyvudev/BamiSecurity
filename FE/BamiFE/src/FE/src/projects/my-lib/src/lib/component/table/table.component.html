@@ -1,0 +1,608 @@
+<!--  -->
+<div class="table-filter" [ngClass]="{ 'opacity-70 pointer-events-none': isLoading }">
+    <ng-content></ng-content>
+</div>
+
+<div class="wrapper-lib-table {{ resetBorder ? 'reset-border': '' }} {{ disabled ? 'disable-click' : ''}}"
+    *ngIf="showTable">
+    <div #eTable [@animationRefresh] *ngIf="isShowTable" [style.position]="'relative'">
+        <div #wrapperETable (scroll)="onScroll($event)" [style]="{ height: heightConst ? heightConst+'px': ''}"
+            class="lib-table" [id]="id" [style.overflow]="'auto'">
+            <ngx-spinner type="ball-spin-clockwise" size="default" [fullScreen]="false">
+            </ngx-spinner>
+            <p-table styleClass="custom-table {{ class }} {{ isRowOdds && 'row-odds' }}" [value]="rows"
+                [(selection)]="selectedItems" [reorderableColumns]="reorderableColumns"
+                (onRowReorder)="_onRowReorder($event)" [rowHover]="rowHover" [responsiveLayout]="responsiveLayout"
+                [dataKey]="dataKey" [showCurrentPageReport]="showCurrentPageReport" [paginator]="paginator"
+                [scrollable]="scrollable" [scrollHeight]="'auto'" (onRowSelect)="onSelectedChange()"
+                (onRowUnselect)="onSelectedChange()"
+                (onHeaderCheckboxToggle)="onSelectedChange();onCheckboxClick($event)" [sortMode]="'multiple'"
+                (onSort)="onSort($event)" [customSort]="true">
+                <ng-template pTemplate="header">
+                    <tr id="thead">
+                        <ng-container *ngFor="let col of columnShows; last as lastItem; index as index">
+                            <th [pSortableColumn]="col?.fieldSort || col.field"
+                                [pSortableColumnDisabled]="!col?.isSort || onResize" [alignFrozen]="col?.alignFrozen"
+                                [frozen]="col?.isFrozen" [ngStyle]="getStyleColumn | function :col"
+                                [ngClass]="[col?.class]" [title]="col?.title || ''"
+                                class="{{ col?.otherType === ETableColumnType.LINK && ['ID', '#ID'].includes(col?.header) ? 'id-link' : '' }}"
+                                [resizeColumn]="true" (_onResize)="onResize=$event">
+                                <ng-container>
+                                    <!-- COLUMN CHECKBOX -->
+                                    <div #checkbox
+                                        *ngIf="[ETableColumnType.CHECKBOX_ACTION, ETableColumnType.CHECKBOX_SHOW, ETableColumnType.CHECKBOX_CHANGE].includes(col?.type) && !col?.header">
+                                        <ng-container
+                                            *ngIf="[ETableColumnType.CHECKBOX_ACTION, ETableColumnType.CHECKBOX_SHOW, ETableColumnType.CHECKBOX_CHANGE].includes(col?.type) && !col?.header">
+                                            <!-- [disabled]="col.type === ETableColumnType.CHECKBOX_SHOW" -->
+                                            <p-tableHeaderCheckbox
+                                                [disabled]="col.type === ETableColumnType.CHECKBOX_SHOW || col.type === ETableColumnType.CHECKBOX_CHANGE">
+                                            </p-tableHeaderCheckbox>
+                                        </ng-container>
+                                        <div class="popup" [style.top.px]="top" [style.left.px]="left"
+                                            *ngIf="isShowOptionPagePopup && !col?.isHideOptionCheckbox">
+                                            <div class="flex flex-column mt-3 ml-3">
+                                                <div *ngFor="let option of optionPage" class="field-checkbox">
+                                                    <p-checkbox [value]="option?.code" [(ngModel)]="selectedOption"
+                                                        [inputId]="option.code" (onChange)="onChange($event)">
+                                                    </p-checkbox>
+                                                    <label [for]="option.code">{{ option.name }}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- COLUMN TEXT -->
+                                    <ng-container *ngIf="col?.type === ETableColumnType.TEXT || col?.header">
+                                        <span> {{col.header}}</span>
+                                        <p-sortIcon field="{{ col.field }}" *ngIf="col.isSort"></p-sortIcon>
+                                    </ng-container>
+
+                                    <!-- COLUMN ACTION -->
+                                    <ng-container *ngIf="col?.type == ETableColumnType.ACTION_DROPDOWN && !col?.header">
+                                        <i class="pi pi-cog hover-pointer icon-setting-display-column"
+                                            (click)="setColumn()"></i>
+                                    </ng-container>
+                                    <!-- <div *ngIf="col?.isResize"class="icon-resize" (click)="$event.stopPropagation()">
+                                        <img [src]="iconResizeColumn" />
+                                    </div>
+
+                                    <i *ngIf="isShowIconFilter && last"
+                                        class="{{ isShowFilter ? 'pi pi-filter-slash' : 'pi pi-filter' }} b-icon-filter-setting"
+                                        [style.right.rem]="col?.width - 1.5"
+                                        [title]="isShowFilter ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'"
+                                        (click)="changeDisplayFilter()">
+                                    </i> -->
+                                </ng-container>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+                    <tr [pReorderableRow]="rowIndex"
+                        [ngClass]="{'row-separator-history': row?.operationType === BaseConsts.separatorHistory}">
+                        <ng-container *ngFor="let col of columnShows; index as index">
+                            <ng-container
+                                *ngFor="let colValue of [(row?.[col?.field+'_customValue'] || row?.[col?.field])]">
+                                <td [ngSwitch]="col?.type" [ngStyle]="getStyleColumn | function: [col]"
+                                    [ngClass]="col?.class + ' column-'+index" [alignFrozen]="col?.alignFrozen"
+                                    [frozen]="col?.isFrozen">
+                                    <ng-container *ngSwitchCase="ETableColumnType.REORDER" #REORDER>
+                                        <span class="pi pi-bars" pReorderableRowHandle></span>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.ACTION_ICON" #ICON>
+                                        <i [class]="col?.icon + ' b-icon hover-pointer' + ' p-0'"
+                                            (click)="columnOriginals[col.position].action(row, rowIndex)"></i>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.ACTION_BUTTON" #BUTTON>
+                                        <p-button [icon]="col.icon"
+                                            [disabled]="colValue?.isDisableButton ? true : false" [lable]="col?.label"
+                                            [styleClass]="'hover-pointer p-button-rounded ' + col?.classButton"
+                                            (onClick)="columnOriginals[col.position].action(row, index)">
+                                        </p-button>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.ACTION_DROPDOWN" #DROPDOWN>
+                                        <div class="flex hover-pointer {{ col?.class }}"
+                                            *ngIf="listAction[rowIndex]?.length > 0">
+                                            <i class="pi pi-ellipsis-h"
+                                                (click)="isDisabledActionDropdown && menu.toggle($event); showActions()"></i>
+                                            <p-menu #menu [popup]="true" class="button-actions"
+                                                [model]="listAction[rowIndex]" appendTo="body">
+                                            </p-menu>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.HISTORY" #HISTORY>
+                                        <div [ngClass]="col?.cutText" [title]="colValue">
+                                            <div *ngIf="!row?.isImage">
+                                                <ng-container
+                                                    [ngTemplateOutletContext]="{ col: col, colValue: colValue, fieldContentHtmls: fieldContentHtmls }"
+                                                    [ngTemplateOutlet]="textCustom">
+                                                </ng-container>
+                                            </div>
+                                            <div *ngIf="row?.isImage">
+                                                <ng-container *ngIf="colValue?.includes(environment?.apiFile)"
+                                                    [ngTemplateOutletContext]="{ col: col, colValue: colValue, fieldContentHtmls: fieldContentHtmls, row: row }"
+                                                    [ngTemplateOutlet]="imageHistory">
+                                                </ng-container>
+                                                <div *ngIf="!colValue?.includes(environment?.apiFile)">
+                                                    -
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="ETableColumnType.TEXT">
+                                        <div *ngFor="let action of [columnOriginals[col?.position]?.action]"
+                                            [ngClass]="{'hover-pointer': !!action}" [class]="col?.cutText"
+                                            (click)="action && action(row, index)" [title]="colValue">
+                                            <span [ngClass]="{'link': col?.otherType === ETableColumnType.LINK}">
+                                                <ng-container [ngTemplateOutletContext]="{
+														col: col,
+														colValue: colValue,
+                                                        row: row,
+														fieldContentHtmls: fieldContentHtmls
+													}" [ngTemplateOutlet]="textCustom">
+                                                </ng-container>
+                                            </span>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container #CHEKBOX>
+                                        <ng-container *ngSwitchCase="ETableColumnType.CHECKBOX_ACTION">
+                                            <p-tableCheckbox [value]="row" (onChange)="onRowSelect(row)"
+                                                [disabled]="row?.isDisabled">
+                                            </p-tableCheckbox>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="ETableColumnType.CHECKBOX_SHOW">
+                                            <lib-checkbox [isCheckboxIcon]="col?.isCheckboxIcon"
+                                                [styleClass]="'check-box-default-cursor'" [value]="colValue"
+                                                [readonly]="true" [disabled]="row?.isDisabled">
+                                            </lib-checkbox>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="ETableColumnType.CHECKBOX_CHANGE">
+                                            <!-- {{colValue | json}} -->
+                                            <div (click)="columnOriginals[col?.position]?.action(row, index)">
+                                                <lib-checkbox [isCheckboxIcon]="col?.isCheckboxIcon"
+                                                    [disabled]="colValue?.isDisableCheckbox ? true : false"
+                                                    [value]="colValue?.value" [readonly]="true">
+                                                </lib-checkbox>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.IMAGE" #IMAGE>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="imageCustom">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.DESIGN" #DESIGN>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="designCustom">
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="ETableColumnType.IMAGE_SET" #IMAGE_SET>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="imageSet">
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="ETableColumnType.TEMPLATE" #TEMPLATE>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="template">
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="ETableColumnType.SIZE_TEXT" #SIZE_TEXT>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="sizeCustom">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.IMAGE_FILE_PRINT" #IMAGE_FILE_PRINT>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="imageFilePrintCustom">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.LABEL" #LABEL>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="label">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.TRACKING_NUMBER" #TRACKING_NUMBER>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="tracking_number">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.NOTE_BATCH" #NOTE_BATCH>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="note_batch">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.NOTE_ITEM" #NOTE_ITEM>
+                                        <ng-container
+                                            [ngTemplateOutletContext]="{ col: col, colValue: colValue, row: row }"
+                                            [ngTemplateOutlet]="note_item">
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="typeDates.includes(col?.type)" #DATE>
+                                        <span> {{ colValue }}</span>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.CURRENCY" #CURRENCY>
+                                        <span>
+                                            {{ colValue >= 0 ? ((colValue | currency) + (col?.unit || '')) : (colValue
+                                            || null) }}
+                                        </span>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.STATUS" #STATUS>
+                                        <span class="p-tag {{ (colValue)?.class }}" severity="{{ colValue?.severity }}">
+                                            {{ (colValue)?.name }}
+                                        </span>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="ETableColumnType.LIST_STATUS" #LIST_STATUS>
+                                        <div (click)="logValue(colValue)" class="mt-3"
+                                            *ngFor="let status of colValue?.listStatus">
+                                            <span class="p-tag {{ status?.class }} " severity="{{ status?.severity }}">
+                                                {{ status?.name }}
+                                            </span>
+                                        </div>
+                                    </ng-container>
+                                </td>
+                            </ng-container>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <ng-container *ngIf="isLoading">
+                        <tr [style.height.px]="38" *ngFor="let i of counter(tableHeight/38 - 2)" class="pending-data">
+                            <td [colSpan]="columnShows?.length" class="b-empty-data"></td>
+                        </tr>
+                    </ng-container>
+                    <ng-container *ngIf="!isLoading">
+                        <td [colSpan]="columnShows?.length" class="b-empty-data">
+                            <ng-container *ngIf="emptyDataMessage">
+                                <div class="text-center mt-5"> {{ emptyDataMessage }} </div>
+                            </ng-container>
+                            <!-- <ng-container *ngIf="!emptyDataMessage">
+								<div>
+									<p-image class="" [src]="EImageTable.EMPTY" alt="Image"></p-image>
+								</div>
+								<p> Không có dữ liệu hiển thị </p>
+							</ng-container> -->
+                        </td>
+                    </ng-container>
+                </ng-template>
+                <ng-template pTemplate="loading-data">
+                    <tr class="loading-data">
+                        <td [colSpan]="columnShows?.length"> Đang tải dữ liệu ... </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="empty-data" style="position: absolute; top: 20%; left: 45%;"
+            *ngIf="!emptyDataMessage && !rows?.length && !isLoading && showImageEmpty">
+            <div>
+                <p-image [src]="EImageTable.EMPTY" alt="Image"></p-image>
+            </div>
+            <p> Không có dữ liệu hiển thị </p>
+        </div>
+    </div>
+    <!-- Bảng nếu trên 25 item hiện isShowPaginator-->
+    <ng-container *ngIf="isShowPaginator && (!tableInTab || rows?.length > page.perPageShowPaginatorInTab)"
+        [ngTemplateOutlet]="paginatorCustom"></ng-container>
+</div>
+<ng-template #paginatorCustom>
+    <div #wrapperPaginator class="paginator">
+        <p-paginator #paginatorEl [appendTo]="'body'" [rows]="page.pageSize" [totalRecords]="page.totalItems"
+            [rowsPerPageOptions]="page.perPageOptions" currentPageReportTemplate="Tất cả {{ page.totalItems }} dòng"
+            [showCurrentPageReport]="true" [styleClass]="styleClassPaginator" (onPageChange)="paginatorChange($event)">
+        </p-paginator>
+    </div>
+</ng-template>
+
+<ng-template #textCustom let-col="col" let-fieldContentHtmls="fieldContentHtmls" let-colValue="colValue" let-row="row">
+    <ng-container *ngIf="fieldContentHtmls?.includes(col?.field)">
+        <span [innerHTML]="colValue" [title]="extractTextFromHTML(colValue)"> </span>
+    </ng-container>
+    <span *ngIf="!fieldContentHtmls?.includes(col?.field)" class="flex align-item-center">
+        {{
+        col?.sliceString && (colValue?.length > col?.sliceString)
+        ? ((colValue | slice :0 :col.sliceString)+'...')
+        : colValue
+        }}
+        <img *ngIf="col?.otherType === ETableColumnType.QUARANTINE_CONTRACT && row?.isQuarantineContract"
+            class='quarantine-contract' src='../../../assets/layout/images/icons/quarantine-contract.svg'
+            alt='mirage-layout' [pTooltip]="'Hợp đồng phong tỏa'" />
+        <img *ngIf="col?.otherType === ETableColumnType.QUARANTINE_CONTRACT && row?.isUnpaidContract"
+            class='quarantine-contract' src='../../../assets/layout/images/icons/unpaid-contract.svg'
+            alt='mirage-layout' [pTooltip]="'Chi trả lợi tức thiếu'" />
+    </span>
+</ng-template>
+
+<ng-template #imageCustom let-col="col" let-row="row" let-colValue="colValue">
+    <div (click)="!colValue?.default && showImage(colValue?.url ||colValue)" [style.cursor]="'pointer'">
+        <p-image
+            *ngIf="colValue && !row.isVideo && ((row?.type === ETableColumnType.IMAGE || !Utils.checkLinkYoutube(colValue?.url))) && row?.imageType !== 'LINK'"
+            [src]="colValue?.default || colValue?.url || colValue?.value || colValue ||(api+colValue)"
+            [height]="col?.heightImage || 100" alt="Image" [width]="col?.widthImage">
+        </p-image>
+    </div>
+    <lib-video *ngIf="colValue && row?.imageType === 'LINK'"
+        [src]="row?.mainImg ? api+row?.mainImg : DefaultImage.VIDEO_DEFAULT" [height]="100">
+    </lib-video>
+</ng-template>
+
+<ng-template #designCustom let-col="col" let-row="row" let-colValue="colValue">
+    <div class="grid">
+        <div class="col-6">
+            <div class="flex flex-column w-7rem border-1 surface-border border-round-lg">
+                <div class="flex flex-column h-2rem justify-content-center">
+                    <span class="ml-2">front</span>
+                </div>
+                <hr class="p-0 m-0">
+                <div class="flex p-2 justify-content-between ">
+                    <i *ngIf="colValue?.saleDesignFront"
+                        (click)="!colValue?.default && showImage(api + colValue?.saleDesignFront)" class="pi pi-eye"
+                        style="font-size: 1.2rem ; color:blue ; cursor: pointer"></i>
+                    <i class="pi pi-pencil" (click)="editImage($event,viewEditDesign, colValue?.saleDesignFront)"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                    <i *ngIf="colValue?.saleDesignFront" class="pi pi-clone"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                </div>
+            </div>
+        </div>
+        <!--  -->
+        <div class="col-6">
+            <div class="flex flex-column w-7rem border-1 surface-border border-round-lg">
+                <div class="flex flex-column h-2rem justify-content-center">
+                    <span class="ml-2">back</span>
+                </div>
+                <hr class="p-0 m-0">
+                <div class="flex p-2 justify-content-between ">
+                    <i *ngIf="colValue?.saleDesignBack" class="pi pi-eye"
+                        (click)="!colValue?.default && showImage(api + colValue?.saleDesignBack)"
+                        style="font-size: 1.2rem ; color:blue;cursor: pointer"></i>
+                    <i class="pi pi-pencil" (click)="editImage($event,viewEditDesign,colValue?.saleDesignBack)"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                    <i *ngIf="colValue?.saleDesignBack" class="pi pi-clone"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                </div>
+            </div>
+        </div>
+        <!--  -->
+        <div class="col-6">
+            <div class="flex flex-column w-7rem border-1 surface-border border-round-lg">
+                <div class="flex flex-column h-2rem justify-content-center">
+                    <span class="ml-2">hood</span>
+                </div>
+                <hr class="p-0 m-0">
+                <div class="flex p-2 justify-content-between ">
+                    <i *ngIf="colValue?.saleDesignHood"
+                        (click)="!colValue?.default && showImage(api + colValue?.saleDesignHood)" class="pi pi-eye"
+                        style="font-size: 1.2rem ; color:blue;cursor: pointer"></i>
+                    <i class="pi pi-pencil" (click)="editImage($event,viewEditDesign,colValue?.saleDesignHood)"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                    <i *ngIf="colValue?.saleDesignHood" class="pi pi-clone"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                </div>
+            </div>
+        </div>
+        <!--  -->
+        <div class="col-6">
+            <div class="flex flex-column w-7rem border-1 surface-border border-round-lg">
+                <div class="flex flex-column h-2rem justify-content-center">
+                    <span class="ml-2">sleeves</span>
+                </div>
+                <hr class="p-0 m-0">
+                <div class="flex p-2 justify-content-between ">
+                    <i *ngIf="colValue?.saleDesignSleeves"
+                        (click)="!colValue?.default && showImage(api + colValue?.saleDesignSleeves)" class="pi pi-eye"
+                        style="font-size: 1.2rem ; color:blue;cursor: pointer"></i>
+                    <i class="pi pi-pencil" (click)="editImage($event,viewEditDesign,colValue?.saleDesignSleeves)"
+                        style="font-size: 1.2rem ;cursor: pointer"></i>
+                    <i *ngIf="colValue?.saleDesignSleeves" class="pi pi-clone"
+                        style="font-size: 1.2rem;cursor: pointer"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-overlayPanel #viewEditDesign>
+        <div class="p-dialog-custom customModal">
+            <lib-inputText [(ngModel)]="mockupFrontEdit" label="EditUrl"></lib-inputText>
+        </div>
+        <div class="flex flex-row-reverse mt-2">
+            <lib-button label="Save"></lib-button>
+        </div>
+    </p-overlayPanel>
+</ng-template>
+
+<ng-template #sizeCustom let-col="col" let-row="row" let-colValue="colValue">
+    <div class="flex flex-column">
+        <span>{{colValue?.size}}</span>
+        <span class="mt-2" *ngIf=" colValue?.length && colValue?.width" [ngStyle]="{'color': 'red'}">{{ colValue?.length}}x{{colValue?.width}} in</span>
+    </div>
+</ng-template>
+
+<ng-template #imageHistory let-col="col" let-fieldContentHtmls="fieldContentHtmls" let-row="row"
+    let-colValue="colValue">
+    <div (click)="!colValue?.default && showImage(colValue)" [style.cursor]="'pointer'">
+        <p-image [src]="colValue" [height]="col?.height" alt="Image" width="100">
+        </p-image>
+    </div>
+
+</ng-template>
+
+<ng-template #imageFilePrintCustom let-col="col" let-row="row" let-colValue="colValue">
+    <div (click)="!colValue?.default && showImage(colValue?.url ||colValue)">
+
+        <p-image #imageShow (mouseenter)="op.show($event)" (mouseleave)="op.hide()" *ngIf="colValue && !row.isVideo && 
+           ((row?.type === ETableColumnType.IMAGE || !Utils.checkLinkYoutube(colValue?.url))) && 
+            row?.imageType !== 'LINK'" [preview]="true" [style]="{
+            'display': 'block',
+            'width' : '100px',
+            'height' : '100px',
+            'background-image': 'url(' + (colValue?.default || colValue?.url || colValue?.value  || (api + colValue)) + ')',
+            'background-size': 'cover',
+            'background-position': 'center center',
+            'background-repeat': 'no-repeat',
+            }">
+        </p-image>
+        <p-overlayPanel dismissable="true" appendTo="body" #op [style]="overlayPanelStyle">
+            <div class="content">
+                <p-image
+                    *ngIf="colValue && !row.isVideo && ((row?.type === ETableColumnType.IMAGE || !Utils.checkLinkYoutube(colValue?.url))) && row?.imageType !== 'LINK'"
+                    [src]="colValue?.default || colValue?.url || colValue?.value  || (api + colValue)"
+                    [height]="col?.heightImage || 400" alt="Image" [width]="col?.widthImage">
+                </p-image>
+            </div>
+        </p-overlayPanel>
+    </div>
+
+</ng-template>
+
+<ng-template #imageSet let-col="col" let-row="row" let-colValue="colValue">
+
+    <div [style.cursor]="'pointer'">
+        <div class="w-3rem p-1 border-round-lg" style="    
+        position: relative;
+        top: 29px;
+        left: 3px;
+        z-index :99;
+        background:#ffff;">
+            <span *ngIf="col?.otherType === ETableColumnType.IS_MOCKUP_FRONT">front</span>
+            <span *ngIf="col?.otherType === ETableColumnType.IS_MOCKUP_BACK">back</span>
+        </div>
+
+        <p-image  [preview]="true" [style]="{
+        'display': 'block',
+        'width' : '100px',
+        'height' : '100px',
+        'background-image': 'url(' + (colValue?.default || colValue?.url || colValue?.value  || (api + colValue)) + ')',
+        'background-size': 'cover',
+        'background-position': 'center center',
+        'background-repeat': 'no-repeat',
+        }">
+            <ng-template pTemplate="preview">
+                <div (click)="preventOverlay($event)" class="flex h-full w-7rem p-2 align-items-center"
+                    [ngClass]="{'justify-content-between':colValue?.value ||  colValue?.default || colValue?.url || colValue , 'justify-content-center': col?.otherType === ETableColumnType.IS_MOCKUP_BACK}">
+
+                    <i class="pi pi-pencil" tooltipPosition="top" pTooltip="Edit" style="font-size: 1.2rem"
+                        (click)="editImage($event,viewEdit, colValue)"></i>
+
+                    <i *ngIf="colValue?.value ||  colValue?.default || colValue?.url || colValue " class="pi pi-trash "
+                        style="font-size: 1.2rem" tooltipPosition="top" pTooltip="Disable Mockup"></i>
+
+                    <i *ngIf="colValue?.value ||  colValue?.default || colValue?.url || colValue " class="pi pi-eye"
+                        tooltipPosition="top" pTooltip="View image" style="font-size: 1.2rem"
+                        (click)="!colValue?.default && showImage(api + colValue)"></i>
+
+                    <i (mouseover)="isHorverToolTip = true" (mouseout)="isHorverToolTip = false; toolTipCopy='Copy to clipbroad'" *ngIf="colValue?.value ||  colValue?.default || colValue?.url || colValue " class="pi pi-copy"
+                        tooltipPosition="top" [title]="toolTipCopy"  (click)="copyUrl(api + colValue)" [pTooltip]="toolTipCopy" style="font-size: 1.2rem"></i>
+
+                    <p-overlayPanel #viewEdit>
+                        <div class="p-dialog-custom customModal">
+                            <lib-inputText [(ngModel)]="mockupFrontEdit" label="EditUrl"></lib-inputText>
+                        </div>
+                        <div class="flex flex-row-reverse mt-2">
+                            <lib-button label="Save"></lib-button>
+                        </div>
+                    </p-overlayPanel>
+
+                </div>
+            </ng-template>
+        </p-image>
+    </div>
+</ng-template>
+
+<ng-template #template let-col="col" let-row="row" let-colValue="colValue">
+    <div>
+        <div *ngIf="col?.otherType !== ETableColumnType.LINK" [style.cursor]="'pointer'" style="color: blue;user-select:none">
+            {{colValue?.code}}
+        </div>
+
+        <div  *ngFor="let action of [columnOriginals[col?.position]?.action]"
+        [ngClass]="{'hover-pointer': !!action}" [class]="col?.cutText"
+        (click)="action && action(row, index)" [title]="colValue">
+        <span *ngIf="col?.otherType === ETableColumnType.LINK" [ngClass]="{'link': col?.otherType === ETableColumnType.LINK}">
+            <ng-container [ngTemplateOutletContext]="{
+                    col: col,
+                    colValue: colValue?.code,
+                    row: row,
+                    fieldContentHtmls: fieldContentHtmls
+                }" [ngTemplateOutlet]="textCustom">
+            </ng-container>
+        </span>
+    </div>
+        <div (click)="logValue(colValue)" class="text-sm mt-1" title="orderNumber">
+            {{colValue?.orderNumber}}
+        </div>
+        <div class="text-xs mt-1" title="Namespace">
+            {{colValue?.namespace}}
+        </div>
+        <div class="mt-3" *ngFor="let status of colValue?.listStatus">
+            <span class="p-tag {{ status?.class }} " severity="{{ status?.severity }}">
+                {{ status?.name }}
+            </span>
+        </div>
+
+    </div>
+</ng-template>
+
+<ng-template #label let-col="col" let-row="row" let-colValue="colValue">
+    <span (click)="!colValue?.default && showImage(colValue?.url ||colValue)" *ngIf="colValue"
+        style="color: blue; cursor: pointer;user-select: none;">View</span>
+    <i *ngIf="!colValue">Not available</i>
+    <div style="display:none" [style.cursor]="'pointer'">
+        <p-image
+            *ngIf="colValue && !row.isVideo && ((row?.type === ETableColumnType.IMAGE || !Utils.checkLinkYoutube(colValue?.url))) && row?.imageType !== 'LINK'"
+            [src]="colValue?.default || colValue?.url || colValue?.value || colValue ||(api+colValue)"
+            [height]="col?.heightImage || 100" alt="Image" [width]="col?.widthImage">
+        </p-image>
+    </div>
+</ng-template>
+
+<ng-template #tracking_number let-col="col" let-row="row" let-colValue="colValue">
+    <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-replay" pTooltip="Not found order by barcode or tracking number" tooltipPosition="top"
+            style="color : red;font-size: 1rem"></i>
+    </div>
+</ng-template>
+
+<ng-template #note_batch let-col="col" let-row="row" let-colValue="colValue">
+
+    <i (click)="toggleOverlay($event, row, ap)" class="pi pi-pencil"
+        style="color : blue;font-size: 1rem ; cursor: pointer;user-select: none;"></i>
+
+    <p-overlayPanel #ap>
+        <div class="p-dialog-custom customModal">
+            <lib-inputText [textarea]="true" [(ngModel)]="noteBatch" label="Note"></lib-inputText>
+        </div>
+        <div class="flex flex-row-reverse mt-2">
+            <lib-button (onClick)="updateNoteBatch(row)" label="Lưu"></lib-button>
+        </div>
+    </p-overlayPanel>
+
+</ng-template>
+
+<ng-template #note_item let-col="col" let-row="row" let-colValue="colValue">
+
+    <i (click)="toggleOverlay($event, row, op)" class="pi pi-pencil"
+        style="color : blue;font-size: 1rem ; cursor: pointer;user-select: none;"></i>
+
+    <p-overlayPanel #op>
+        <div class="p-dialog-custom customModal">
+            <lib-inputText [textarea]="true" [(ngModel)]="noteItem"  [value]="noteItem || row?.note" label="Note"></lib-inputText>
+        </div>
+        <div class="flex flex-row-reverse mt-2">
+            <lib-button (onClick)="updateNoteItem(row)" label="Lưu"></lib-button>
+        </div>
+    </p-overlayPanel>
+
+</ng-template>

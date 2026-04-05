@@ -1,0 +1,6 @@
+@CR.Core.API_HostAddress = http://localhost:5268
+
+GET {{CR.Core.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

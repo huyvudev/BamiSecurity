@@ -1,0 +1,56 @@
+::ng-deep .date-dropdown-search{
+    display: flex;
+
+    &:hover {
+        input{
+            border-color: #ced4da !important;
+            border-left: none;
+        }
+        p-dropdown {
+            .p-component{
+                border-color: #ced4da !important;
+                border-right: none;
+            }
+        }
+    }
+
+    &:focus-within {
+        input{
+            border-color: #0045DC !important;
+            border-left: none;
+            box-shadow: none !important;
+        }
+        p-dropdown {
+            .p-component{
+                border-color: #0045DC !important;
+                border-right: none;
+                box-shadow: none !important;
+            }
+        }
+        border-radius: 8px;
+        box-shadow: 0 0 0 0.2rem rgba(23,92,211,0.321) !important;
+    }
+    
+    input{
+        border-bottom-left-radius: 0 !important;
+        border-top-left-radius: 0 !important;
+        border-left: none !important;
+        height: 33px;
+    }
+    p-dropdown {
+        .p-component{
+            border-bottom-right-radius: 0 !important;
+            border-top-right-radius: 0 !important;
+            border-right: none !important;
+        }
+        .p-dropdown::after{
+            position: absolute;
+            background-color: #D0D5DD;
+            height: 24px;
+            content: "";
+            width: 1px;
+            right: 0;
+            top: 10%
+        }
+    }
+}

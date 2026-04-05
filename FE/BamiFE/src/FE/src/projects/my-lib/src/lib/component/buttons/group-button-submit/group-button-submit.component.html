@@ -1,0 +1,36 @@
+
+<div class="{{ isDialogType ? 'p-dialog-footer custom-dialog-footer' : ''}}" [id]="id" [style.minHeight.px]="36">
+    <div *ngIf="isDialogType != undefined">
+        <lib-button
+            *ngIf="permissionUpdate && !isEdit"
+            [label]="labelEdit"
+            [styleClass]="styleClassButtonEdit"
+            iconType="edit" 
+            (onClick)="_activeEdit()"
+        />
+        <!--  -->
+        <ng-container *ngIf="isEdit">
+            <lib-button
+                [label]="labelCancel"
+                iconType="cancel"
+                styleClass="mr-2"
+                (onClick)="_cancel()"
+            />
+            <!--  -->
+            <lib-button
+                type="submit"
+                [label]="labelSubmit"
+                styleClass="btn-submit"
+                iconType="save" 
+                (onClick)="_submit();"
+                [disabled]="disabled"
+            />
+        </ng-container>
+        <ng-container *ngIf="!permissionUpdate && isDialogType">
+            <lib-button
+                [label]="labelClose"
+                (onClick)="cancel.emit()"
+            />
+        </ng-container>
+    </div>
+</div>
